@@ -1,3 +1,3 @@
 # swift-Codewars
 
-Playground files for codewars katas in Swift language
+Playground files for [Codewars](https://www.codewars.com) katas in Swift language
