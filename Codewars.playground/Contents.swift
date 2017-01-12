@@ -221,7 +221,7 @@ func shuffleMerge(first: Node?, second: Node?) -> Node? {
     var switched = false
     while a != nil && b != nil {
         if switched {
-           current.next = b
+            current.next = b
             b = b!.next
         } else {
             current.next = a
@@ -368,7 +368,7 @@ func dashatize(_ number: Int) -> String {
             if dashatize.characters.last == Character("-") {
                 dashatize.append("\(String(singleDigit))-")
             } else {
-               dashatize.append("-\(String(singleDigit))-")
+                dashatize.append("-\(String(singleDigit))-")
             }
         }
     }
@@ -415,7 +415,7 @@ func descendingOrder(of number: Int) -> Int {
 func accum(_ s: String) -> String {
     return s.characters.enumerated().map { (index, element) in
         return String(element).uppercased().padding(toLength: index+1, withPad: String(element).lowercased(), startingAt: 0)
-    }.joined(separator: "-")
+        }.joined(separator: "-")
 }
 
 //https://www.codewars.com/kata/57aa218e72292d98d500240f
@@ -468,7 +468,7 @@ func evaluate(good: String, vsEvil evil: String) -> String {
         default:
             return Int(String(element))!
         }
-    }.reduce(0, +)
+        }.reduce(0, +)
     
     let evilForce = evil.components(separatedBy: " ").enumerated().map { (index, element) -> Int in
         switch index {
@@ -483,7 +483,7 @@ func evaluate(good: String, vsEvil evil: String) -> String {
         default:
             return Int(String(element))!
         }
-    }.reduce(0, +)
+        }.reduce(0, +)
     
     return goodForce == evilForce ? "Battle Result: No victor on this battle field" : goodForce > evilForce ? "Battle Result: Good triumphs over Evil" : "Battle Result: Evil eradicates all trace of Good"
 }
@@ -533,4 +533,82 @@ func triangular(_ n: Int) -> Int{
         result += track
     }
     return result
+}
+
+func expandedForm(_ num: Int) -> String {
+    var expandStr = ""
+    for (index, numChar) in String(num).characters.enumerated() {
+        if Int(String(numChar)) != 0 {
+            expandStr += (" + " + String(numChar) + String(repeatElement("0", count: String(num).characters.count-index-1)))
+        }
+    }
+    return expandStr.substring(from: expandStr.index(expandStr.startIndex, offsetBy: 3))
+}
+
+//https://www.codewars.com/kata/5853213063adbd1b9b0000be/train/swift
+enum Direction {
+    case up, down, left, right
+}
+
+func streetFighterSelection(fighters: [[String]], position: (row: Int, column: Int), moves: [Direction]) -> [String] {
+    var row = position.row
+    var col = position.column
+    let charList = moves.map { (move) -> String in
+        switch move {
+        case .up:
+            row = 0
+        case .down:
+            row = 1
+        case .left:
+            col = col == 0 ? fighters[row].count - 1 : col-1
+        case .right:
+            col = col == fighters[row].count - 1 ? 0 : col+1
+        }
+        return fighters[row][col]
+    }
+    return charList
+}
+
+func superStreetFighterSelection(fighters: [[String]], position: (row: Int, column: Int), moves: [Direction]) -> [String] {
+    var row = position.row
+    var col = position.column
+    let charList = moves.map { (move) -> String in
+        var tempRow = row
+        var tempCol = col
+        switch move {
+        case .up:
+            tempRow = tempRow - 1 >= 0 ? tempRow-1 : 0
+        case .down:
+            tempRow = tempRow + 1 <= fighters.count-1 ? tempRow+1 : fighters.count-1
+        case .left:
+            tempCol = tempCol == 0 ? fighters[row].count - 1 : tempCol-1
+            while fighters[row][tempCol] == "" {
+                tempCol = tempCol == 0 ? fighters[row].count - 1 : tempCol-1
+            }
+            return fighters[row][tempCol]
+        case .right:
+            tempCol = tempCol == fighters[row].count - 1 ? 0 : tempCol+1
+            while fighters[row][tempCol] == "" {
+                tempCol = tempCol == fighters[row].count - 1 ? 0 : tempCol+1
+            }
+            return fighters[row][tempCol]
+        }
+        
+        if fighters[tempRow][tempCol] == "" {
+            return fighters[row][col]
+        } else {
+            row = tempRow
+            col = tempCol
+            return fighters[tempRow][tempCol]
+        }
+    }
+    return charList
+}
+
+func condense(_ num: Int) -> String {
+    let n = num < 0 ? -num : num
+    var numStr = String(n)
+    let (dotIndex, tag) = n < 1000000000000 ? n < 1000000000 ? n < 1000000 ? n < 1000 ? (0, "") : (-3,"k") : (-6,"m") : (-9,"b") : (-12,"t")
+    numStr.insert(".", at: numStr.index(numStr.endIndex, offsetBy: dotIndex))
+    return tag == "" ? String(num) : num > 0 ? String(format: "%.1f", Double(numStr)!) + tag : "-" + String(format: "%.1f", Double(numStr)!) + tag
 }
