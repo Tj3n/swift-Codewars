@@ -535,6 +535,7 @@ func triangular(_ n: Int) -> Int{
     return result
 }
 
+//https://www.codewars.com/kata/5842df8ccbd22792a4000245/train/swift
 func expandedForm(_ num: Int) -> String {
     var expandStr = ""
     for (index, numChar) in String(num).characters.enumerated() {
@@ -569,6 +570,7 @@ func streetFighterSelection(fighters: [[String]], position: (row: Int, column: I
     return charList
 }
 
+//https://www.codewars.com/kata/street-fighter-2-character-selection-part-2/swift
 func superStreetFighterSelection(fighters: [[String]], position: (row: Int, column: Int), moves: [Direction]) -> [String] {
     var row = position.row
     var col = position.column
@@ -611,4 +613,279 @@ func condense(_ num: Int) -> String {
     let (dotIndex, tag) = n < 1000000000000 ? n < 1000000000 ? n < 1000000 ? n < 1000 ? (0, "") : (-3,"k") : (-6,"m") : (-9,"b") : (-12,"t")
     numStr.insert(".", at: numStr.index(numStr.endIndex, offsetBy: dotIndex))
     return tag == "" ? String(num) : num > 0 ? String(format: "%.1f", Double(numStr)!) + tag : "-" + String(format: "%.1f", Double(numStr)!) + tag
+}
+
+func fizzBuzzCuckooClock(_ time: String) -> String {
+    let timeArray = time.components(separatedBy: ":")
+    let min = Int(timeArray[1])!
+    if min == 0 {
+        var hr = Int(timeArray[0])!
+        hr = hr > 12 ? hr - 12 : hr
+        return String(repeating: "Cuckoo ", count: hr).trimmingCharacters(in: .whitespaces)
+    } else if min == 30 {
+        return "Cuckoo"
+    } else if min % 3 == 0 && min % 5 == 0 {
+        return "Fizz Buzz"
+    } else if min % 3 == 0 {
+        return "Fizz"
+    } else if min % 5 == 0 {
+        return "Buzz"
+    }
+    return "tick"
+}
+
+infix operator ?=
+func ?= <T: Strideable > (lhs: T, rhs: T) -> Bool {
+    var left: Float!
+    var right: Float!
+    if let l = lhs as? Float, let r = rhs as? Float {
+        left = l
+        right = r
+    } else if let l = lhs as? Double, let r = rhs as? Double{
+        left = Float(l)
+        right = Float(r)
+    } else if let l = lhs as? Int, let r = rhs as? Int {
+        left = Float(l)
+        right = Float(r)
+    } else {
+        return false
+    }
+    if left > right {
+        return left >= right-right*0.1 && left <= right+right*0.1
+    } else {
+        return right >= left-left*0.1 && right <= left+left*0.1
+    }
+}
+
+//https://www.hackerrank.com/challenges/abbr
+func abbreviation(input: String, abbreviation: String) -> Bool {
+    let inputCharArrayCap = input.characters.map({String($0).capitalized})
+    let abbCharArray = abbreviation.characters.map({String($0)})
+    
+    let similar = abbCharArray.filter({inputCharArrayCap.contains($0)})
+    if similar.count != abbreviation.characters.count { return false }
+    
+    var similarInInput = inputCharArrayCap.filter({abbCharArray.contains($0)})
+    
+    var i = 0
+    var indexToRemove = [Int]()
+    for char in abbCharArray {
+        while i < similarInInput.count {
+            if similarInInput[i] != char {
+                indexToRemove.append(i)
+                i+=1
+            } else {
+                i+=1
+                break
+            }
+        }
+    }
+    
+    if i < similarInInput.count - 1 {
+        similarInInput.removeSubrange(i...similarInInput.count-1)
+    }
+    
+    for j in indexToRemove.reversed() {
+        similarInInput.remove(at: j)
+    }
+    
+    similarInInput.joined()
+    return true
+}
+
+//https://www.codewars.com/kata/salesmans-travel/train/swift
+func travel(_ r: String, zipcode: String) -> String {
+    
+    guard zipcode.characters.count == 8 else { return "\(zipcode):/" }
+    
+    var ar = r.components(separatedBy: ",")
+    var indexToRemove = [Int]()
+    for (index, add) in ar.enumerated() {
+        if add.contains(zipcode) {
+            ar[index].removeSubrange(ar[index].range(of: zipcode)!)
+            ar[index] = ar[index].trimmingCharacters(in: .whitespaces)
+        } else {
+            indexToRemove.append(index)
+        }
+    }
+    
+    _ = indexToRemove.reversed().map({ ar.remove(at: $0) })
+    
+    guard ar.count > 0 else { return "\(zipcode):/" }
+    
+    let numList = ar.map({ $0.components(separatedBy: " ")[0] })
+    
+    _ = numList.enumerated().map({ ar[$0.offset] = ar[$0.offset].replacingOccurrences(of: $0.element, with: "").trimmingCharacters(in: .whitespaces) })
+    
+    let address = ar.joined(separator: ",")+"/"+numList.joined(separator: ",")
+    
+    return zipcode+":"+address
+}
+
+//https://www.codewars.com/kata/550f22f4d758534c1100025a/train/swift
+//Not optimized, keep adding dirrection to new array and remove last if next value is opposite
+func dirReduc(_ arr: [String]) -> [String] {
+    var result = checkDir(arr: arr)
+    var before = result.count
+    var after = 0
+
+    while before != after {
+        before = after > 0 ? after : before
+        result = checkDir(arr: result)
+        after = result.count
+    }
+    
+    return result
+}
+
+func checkDir(arr: [String]) -> [String] {
+    var result = arr
+    var toRemove = [Int]()
+    for (i,dir) in arr.enumerated() {
+        
+        guard i < arr.count-1 && !toRemove.contains(i) else { break }
+        
+        switch dir {
+        case "NORTH":
+            if arr[i+1] == "SOUTH" {
+                toRemove.append(contentsOf: [i,i+1])
+            }
+        case "SOUTH":
+            if arr[i+1] == "NORTH" {
+                toRemove.append(contentsOf: [i,i+1])
+            }
+        case "EAST":
+            if arr[i+1] == "WEST" {
+                toRemove.append(contentsOf: [i,i+1])
+            }
+        case "WEST":
+            if arr[i+1] == "EAST" {
+                toRemove.append(contentsOf: [i,i+1])
+            }
+        default:
+            break
+        }
+    }
+    
+    for i in toRemove.sorted().reversed() {
+        result.remove(at: i)
+    }
+    return result
+}
+
+//https://www.codewars.com/kata/phone-directory
+func phone(_ strng: String, _ num: String) -> String {
+    let arr = strng.components(separatedBy: "\n")
+    let lines = arr.filter( {$0.contains(num)} )
+    
+    guard lines.count > 0 else {return "Error => Not found: \(num)"}
+    guard lines.count < 2 else { return "Error => Too many people: \(num)" }
+    
+    var line = lines[0].replacingOccurrences(of: num, with: "")
+    var name = checkMatches(for: "<[a-zA-Z ']+>", in: line)[0]
+    line = line.replacingOccurrences(of: name, with: "")
+    name.remove(at: name.startIndex)
+    name.remove(at: name.index(before: name.endIndex))
+    let adress = checkMatches(for: "[a-zA-Z0-9.-]+", in: line).joined(separator: " ")
+    
+    return "Phone => \(num), Name => \(name), Address => \(adress)"
+}
+
+func checkMatches(for regex: String, in text: String) -> [String] {
+    do {
+        let regex = try NSRegularExpression(pattern: regex, options: .caseInsensitive)
+        let nsString = NSString(string: text)
+        let result = regex.matches(in: text, options: [], range: NSMakeRange(0, text.characters.count))
+        return result.map { nsString.substring(with: $0.range) }
+    } catch let error {
+        print("invalid regex: \(error.localizedDescription)")
+        return []
+    }
+}
+
+
+//https://www.codewars.com/kata/first-variation-on-caesar-cipher/train/swift
+func movingShift(_ s: String, _ shift: Int) -> [String] {
+    
+    let cipher = caesarShift(string: s, shift: shift, reverse: false)
+    let stringArr = cipher.characters.map({ String($0) })
+    
+    let splitRange = stringArr.count%5 == 0 ? stringArr.count/5 : (stringArr.count-stringArr.count%5+5)/5
+    var splitedArr = [String]()
+    var j = 0
+    
+    for i in 1...4 {
+        splitedArr.append(stringArr[j...i*splitRange-1].joined())
+        j = i*splitRange
+    }
+    
+    if j < stringArr.count-1 {
+        splitedArr.append(stringArr[j...stringArr.count-1].joined())
+    } else {
+        splitedArr.append("")
+    }
+    
+    return splitedArr
+}
+
+func demovingShift(_ arr: [String], _ shift: Int) -> String {
+    return caesarShift(string: arr.joined(), shift: shift, reverse: true)
+}
+
+func caesarShift(string: String, shift: Int, reverse: Bool) -> String {
+    var shifted = shift
+    var stringArr = string.characters.map({ String($0) })
+    
+    var letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+    var uLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
+    
+    if reverse {
+        letters = Array(letters.reversed())
+        uLetters = Array(uLetters.reversed())
+    }
+    
+    for (i, char) in stringArr.enumerated() {
+        if letters.contains(char) {
+            if letters.index(of: char)!+shifted >= letters.count {
+                stringArr[i] = letters[(letters.index(of: char)!+shifted)-letters.count]
+            } else {
+                stringArr[i] = letters[letters.index(of: char)!+shifted]
+            }
+            
+        } else if uLetters.contains(char) {
+            if uLetters.index(of: char)!+shifted >= uLetters.count {
+                stringArr[i] = uLetters[(uLetters.index(of: char)!+shifted)-uLetters.count]
+            } else {
+                stringArr[i] = uLetters[uLetters.index(of: char)!+shifted]
+            }
+        }
+        
+        shifted+=1
+        
+        if shifted > 25 {
+            shifted = 0
+        }
+    }
+    
+    return stringArr.joined()
+}
+
+//https://www.codewars.com/kata/554f76dca89983cc400000bb/train/swift
+func solequa(_ n: Int) -> [(Int, Int)] {
+    //find factor
+    var factors:[(a: Int, b: Int)] = [(n,1)]
+    for i in 2...Int(sqrt(Double(n))) {
+        if n%i == 0 {
+            factors.append((Int(n/i),i))
+        }
+    }
+    
+    //calculate x,y
+    var result = [(Int, Int)]()
+    for (i,j) in factors {
+        if (i+j)%2 == 0 && (i-j)%4 == 0 {
+            result.append((Int((i+j)/2),Int((i-j)/4)))
+        }
+    }
+    return result
 }
