@@ -2,7 +2,6 @@
 
 import Foundation
 import UIKit
-import XCPlayground
 import PlaygroundSupport
 
 let containerView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: 375.0, height: 667.0))
@@ -51,23 +50,23 @@ let t = Timer.scheduledTimer(withTimeInterval: 9, repeats: false) { (timer) in
         let l = CGAffineTransform(rotationAngle: CGFloat(-20*M_PI/180))
         let r = CGAffineTransform(rotationAngle: CGFloat(20*M_PI/180))
         
-        rectangle.transform = l
-        UIView.beginAnimations("shake", context: nil)
-        UIView.setAnimationRepeatAutoreverses(true) // important
-        UIView.setAnimationRepeatCount(5)
-        UIView.setAnimationCurve(.easeInOut)
-        UIView.setAnimationDuration(0.5)
-        UIView.setAnimationDidStop(Selector(("animationDidStop:finished:context:"))) //Need class to call
-//        UIView.setAnimationDelegate:self
-        rectangle.transform = r
-        UIView.commitAnimations()
+//        rectangle.transform = l
+//        UIView.beginAnimations("shake", context: nil)
+//        UIView.setAnimationRepeatAutoreverses(true) // important
+//        UIView.setAnimationRepeatCount(5)
+//        UIView.setAnimationCurve(.easeInOut)
+//        UIView.setAnimationDuration(0.5)
+//        UIView.setAnimationDidStop(Selector(("animationDidStop:finished:context:"))) //Need class to call
+////        UIView.setAnimationDelegate:self
+//        rectangle.transform = r
+//        UIView.commitAnimations()
         
 //: or
-//        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0.7, options: [.curveEaseInOut], animations: {
-//            rectangle.transform = CGAffineTransform(translationX: 0, y: 80)
-//        }, completion: { (completed) in
-//            
-//        })
+        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0.7, options: [.curveEaseInOut], animations: {
+            rectangle.transform = CGAffineTransform(translationX: 0, y: 80)
+        }, completion: { (completed) in
+            
+        })
     })
 }
 

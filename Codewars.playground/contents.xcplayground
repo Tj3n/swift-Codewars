@@ -4,5 +4,6 @@
         <page name='Normal'/>
         <page name='Hard'/>
         <page name='LinkedList'/>
+        <page name='Animation'/>
     </pages>
 </playground>

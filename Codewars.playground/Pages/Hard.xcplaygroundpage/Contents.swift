@@ -114,7 +114,7 @@ func prod2sum(_ a: Int64, _ b: Int64, _ c: Int64, _ d: Int64) -> [(Int64, Int64)
     var result = [(Int64, Int64)]()
     guard Int(floor(sqrt(Double(n/2)))) > 1 else { return result }
     for i in 0...Int(floor(sqrt(Double(n/2)))) {
-        let e = i*i
+        let e = Int64(i*i)
         let f = sqrt(Double(n-e))
         if f.truncatingRemainder(dividingBy: 1) == 0 {
             result.append((Int64(i), Int64(f)))
@@ -358,6 +358,132 @@ func matrixMultiplication(_ a:[[Int]], _ b:[[Int]]) -> [[Int]] {
         result.append(rrow)
     }
     return result
+}
+
+//https://www.codewars.com/kata/best-travel/train/swift
+//Get all combination of length from an array
+func subArray<T>(arr: [T], length: Int) -> [[T]] {
+    var a = [[T]]()
+    var result = [T?](repeating: nil, count: length)
+    combination(arr:arr, len: length, start: 0, result: &result, final: &a)
+    return a
+}
+
+func combination<T>(arr: [T], len: Int, start: Int, result: inout [T?], final: inout [[T]]) {
+    if len == 0 {
+        final.append(Array(result) as! [T])
+        return
+    }
+    for i in start...arr.count-len {
+        result[result.count-len] = arr[i]
+        combination(arr: arr, len: len-1, start: i+1, result: &result, final: &final)
+    }
+}
+
+func chooseBestSum(_ t: Int, _ k: Int, _ ls: [Int]) -> Int {
+    if k > ls.count { return  -1 }
+    let a = subArray(arr: ls, length: k).map({ $0.reduce(0, +) })
+    var result = -1
+    for i in a {
+        let j = t-i
+        if j >= 0 && j < t-result {
+            result = i
+        }
+    }
+    return result
+}
+
+//https://www.codewars.com/kata/54d7660d2daf68c619000d95/train/swift
+//Shorten some code
+func gcd2(_ k: (Int,Int)) -> Int {
+    if k.0 <= 0 || k.1 <= 0 { return 0 }
+//    var a = k.0 > k.1 ? k.0 : k.1
+//    var b = k.0 > k.1 ? k.1 : k.0
+//    var c = b
+//    while a%b != 0 {
+//        c = a%b
+//        a = b
+//        b = c
+//    }
+//    return c
+    if k.0 < k.1 { return gcd2((k.1, k.0)) }
+    if k.0%k.1 != 0 {
+        return gcd2((k.1,k.0%k.1))
+    } else {
+        return k.1
+    }
+}
+
+//Uoc chung lon nhat
+func gcd(_ l: [Int]) -> Int {
+//    var arr = l
+//    while arr.count > 1 {
+//        let a = arr.removeLast()
+//        let b = arr.removeLast()
+//        arr.append(gcd2((b, a)))
+//    }
+//    return arr[0]
+    return l.reduce(1, { gcd2(($0, $1)) })
+}
+
+//Boi chung nho nhat
+func lcm(_ l: [Int]) -> Int {
+//    var arr = l
+//    while arr.count > 1 {
+//        let a = arr.removeLast()
+//        let b = arr.removeLast()
+//        arr.append(a*b/gcd2((b, a)))
+//    }
+//    return arr[0]
+    return l.reduce(1, { $0*$1/gcd2(($0, $1)) })
+}
+
+func convertFracts(_ l: [(Int, Int)]) -> [(Int, Int)] {
+    if l.count < 1 { return l }
+    var arr = l
+    //Reduce fractions
+    for (index, frac) in l.enumerated() {
+        let a = gcd2((frac.0,frac.1))
+        if a > 1 {
+            arr[index] = (frac.0/a, frac.1/a)
+        }
+    }
+    //Get same denominator
+    let i = lcm(arr.map({ $0.1 }))
+    let result = arr.map({ (($0.0*i)/$0.1, i) })
+    return result
+}
+
+//https://www.codewars.com/kata/54d496788776e49e6b00052f/train/swift
+func sumOfDivided(_ l: [Int]) -> [(Int, Int)] {
+    var result = [Int:Int]()
+    for i in l {
+        let j = i > 0 ? i : -i
+        let factors = findFactor(num: j)
+        let primeFactors = factors.filter({ findFactor(num: $0).count == 2 }) //Prime only have factor of 1 and itself
+        for k in primeFactors {
+            if let a = result[k] {
+                result[k] = a+i
+            } else {
+                result[k] = i
+            }
+        }
+    }
+    return result.map({ ($0,$1) }).sorted(by: { $0.0 < $0.1 })
+}
+
+func findFactor(num: Int) -> [Int] {
+    var factors = [Int]()
+    for i in 1...Int(round(sqrt(Double(num)))) {
+        if num%i == 0 {
+            if Int(num/i) == i {
+                factors.append(i)
+            } else {
+                factors.append(contentsOf: [Int(num/i), i])
+            }
+        }
+    }
+    return factors
 }
 
 //: [Next](@next)
