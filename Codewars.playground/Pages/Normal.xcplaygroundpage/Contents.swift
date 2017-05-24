@@ -555,3 +555,36 @@ func bouncingBall(_ h: Double, _ bounce: Double, _ window: Double) -> Int {
     }
     return times == 1 ? -1 : times
 }
+
+//https://www.codewars.com/kata/5227129b316b56d50d0003b7/train/swift
+func flattenTwoLevels(_ arr:[Any]) -> [Any] {
+    return arr.map {
+        if let i: [Any] = $0 as? [Any] {
+            return flattenOneLevel(i)
+        }
+        return $0
+    }
+}
+
+func flattenOneLevel(_ arr:[Any]) -> [Any] {
+    var result = [Any]()
+    for k in arr {
+        if let j: [Any] = k as? [Any] {
+            result.append(contentsOf: flattenOneLevel(j))
+        } else {
+            result.append(k)
+        }
+    }
+    return result
+}
+
+//https://www.codewars.com/kata/weight-for-weight/
+func orderWeight(_ s: String) -> String {
+    let arr = s.components(separatedBy: " ")
+    let result = arr.sorted { (first, second) -> Bool in
+        let a = first.characters.reduce(0, { Int(String($0))! + Int(String($1))! })
+        let b = second.characters.reduce(0, { Int(String($0))! + Int(String($1))! })
+        return a == b ? first < second : a < b
+    }
+    return result.joined(separator: " ")
+}

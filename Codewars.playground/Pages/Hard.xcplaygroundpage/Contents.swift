@@ -486,4 +486,31 @@ func findFactor(num: Int) -> [Int] {
     return factors
 }
 
+//https://www.codewars.com/kata/5263c5d011f4233c9d000561/train/swift
+func getLines(_ num:Int?) -> String {
+    guard let num = num, num > 0 else { return "-1" }
+    guard num > 1 else { return "1" }
+    var result = ["1"]
+    _=(1...num-1).map { result.append(getSay(result[$0-1])) }
+    return result.joined(separator: ",")
+}
+
+func getSay(_ num: String) -> String {
+    var counter = 0
+    var result = ""
+    var arr = num.characters.map { String($0) }
+    arr.append("")
+    var char = arr[0]
+    for i in arr {
+        if char == i {
+            counter+=1
+        } else {
+            result.append("\(counter)\(char)")
+            char = i
+            counter = 1
+        }
+    }
+    return result
+}
+
 //: [Next](@next)
