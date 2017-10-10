@@ -588,3 +588,94 @@ func orderWeight(_ s: String) -> String {
     }
     return result.joined(separator: " ")
 }
+
+//https://www.codewars.com/kata/fold-an-array
+func foldArray(_ arr: [Int], times: Int) -> [Int] {
+    var time = times
+    var arr = arr
+    while time > 0 {
+        let counter = arr.count - 1
+        for i in 0...counter/2 {
+            arr[i] = i == counter-i ? arr[i] : arr[i]+arr[counter-i]
+        }
+        time -= 1
+        if (counter/2+1 <= counter) {
+            arr.removeSubrange(counter/2+1...counter)
+        }
+    }
+    return arr
+}
+
+//https://www.codewars.com/kata/sum-of-digits-slash-digital-root/train/swift
+func digitalRoot(of number: Int) -> Int {
+    var num = String(number)
+    while num.characters.count > 1 {
+        num = String(num.characters.reduce(0, { $0+Int(String($1))! }))
+    }
+    return Int(num)!
+}
+
+//https://www.codewars.com/kata/5541f58a944b85ce6d00006a
+func fib(_ n: UInt64) -> UInt64 {
+    if n == 0 { return 0 }
+    if n == 1 { return 1 }
+    return (fib(n-1)+fib(n-2))
+}
+
+//Unoptimize
+func productFib(_ prod : UInt64) -> (UInt64,UInt64,Bool) {
+    var a = UInt64(1)
+    
+    func estimateFib(_ n: UInt64) -> UInt64 {
+        return UInt64((pow(((1.0 + sqrt(5.0))/2.0), Double(n))/sqrt(5.0)).rounded())
+    }
+    
+    var c = estimateFib(a)
+    var d = estimateFib(a+1)
+    while c*d < prod {
+        a+=1
+        c = estimateFib(a)
+        d = estimateFib(a+1)
+    }
+    
+    return c*d == prod ? (c, d, true) : (c, d, false)
+}
+
+//https://www.codewars.com/kata/triangle-number-check
+func isTriangleNumber(_ number: Int) -> Bool {
+    var a = 0
+    var b = 1
+    while a < number {
+        a+=b
+        b+=1
+    }
+    return a==number
+}
+
+//https://www.codewars.com/kata/find-the-parity-outlier/train/swift
+func findOutlier(_ array: [Int]) -> Int {
+    return array[0...2].filter({$0 % 2 != 0}).count > 1 ? array.filter({ $0 % 2 == 0 }).first! : array.filter({ $0 % 2 != 0 }).first!
+}
+
+//https://www.codewars.com/kata/what-century-is-it/train/swift
+func whatCentury(_ year: String) -> String {
+    let a = Int(ceil(Double(year)!/100.0))
+    if a == 11 || a == 12 {
+        return "\(a)th"
+    } else if a%10 == 1 {
+        return "\(a)st"
+    } else if a%10 == 2 {
+        return "\(a)nd"
+    } else if a%10 == 3 {
+        return "\(a)rd"
+    } else {
+        return "\(a)th"
+    }
+//    return a == 11 || a == 12 ? "\(a)th" : a%10 == 1 ? "\(a)st" : a%10 == 2 ? "\(a)nd" : a%10 == 3 ? "\(a)rd" : "\(a)th"
+}
+
+//https://www.codewars.com/kata/599bb194b7a047b04d000077/train/swift
+func howManyPizzas(_ n: Int) -> String {
+    let pizza = pow(Double(n)/2.0,2.0)/(pow(4.0, 2.0)*(45/360))
+    return "pizzas: \(Int(pizza/8)), slices: \(Int(pizza)%8)"
+}

@@ -6,6 +6,7 @@ import PlaygroundSupport
 
 let containerView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: 375.0, height: 667.0))
 PlaygroundPage.current.liveView = containerView
+PlaygroundPage.current.needsIndefiniteExecution = true
 
 let circle = UIView(frame: CGRect(x: 0.0, y: 0.0, width: 50.0, height: 50.0))
 circle.center = containerView.center
@@ -39,6 +40,7 @@ UIView.animate(withDuration: 2, delay: 0, options: [.curveEaseInOut,.autoreverse
     
 }
 
+/*
 let t = Timer.scheduledTimer(withTimeInterval: 9, repeats: false) { (timer) in
     UIView.animate(withDuration: 0.5, delay: 0, options: [.beginFromCurrentState,.curveEaseOut], animations: { 
         rectangle.transform = CGAffineTransform.identity
@@ -47,8 +49,8 @@ let t = Timer.scheduledTimer(withTimeInterval: 9, repeats: false) { (timer) in
     }, completion: { (complete) in
         timer.invalidate()
         
-        let l = CGAffineTransform(rotationAngle: CGFloat(-20*M_PI/180))
-        let r = CGAffineTransform(rotationAngle: CGFloat(20*M_PI/180))
+        let l = CGAffineTransform(rotationAngle: CGFloat(-20*Double.pi/180))
+        let r = CGAffineTransform(rotationAngle: CGFloat(20*Double.pi/180))
         
 //        rectangle.transform = l
 //        UIView.beginAnimations("shake", context: nil)
@@ -69,7 +71,7 @@ let t = Timer.scheduledTimer(withTimeInterval: 9, repeats: false) { (timer) in
         })
     })
 }
-
+*/
  //Need class to call
 func animationDidStop(animationId: String?, finished: NSNumber, context: UnsafeMutableRawPointer) {
     rectangle.transform = CGAffineTransform.identity
