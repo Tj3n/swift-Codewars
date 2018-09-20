@@ -7,7 +7,9 @@
  2. [Hard](Hard)
  */
 
-import Foundation
+import PlaygroundSupport
+
+PlaygroundPage.current.needsIndefiniteExecution = true
 
 enum SomeError: Error {
     case outOfBounds

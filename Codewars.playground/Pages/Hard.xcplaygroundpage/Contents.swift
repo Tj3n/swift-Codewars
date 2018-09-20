@@ -7,7 +7,9 @@
  2. [Linked List](LinkedList)
  */
 
-import Foundation
+import PlaygroundSupport
+
+PlaygroundPage.current.needsIndefiniteExecution = true
 
 //https://www.codewars.com/kata/55be10de92aad5ef28000023/train/swift
 //FML
@@ -469,7 +471,8 @@ func sumOfDivided(_ l: [Int]) -> [(Int, Int)] {
             }
         }
     }
-    return result.map({ ($0,$1) }).sorted(by: { $0.0 < $0.1 })
+    let a = result.map({ ($0,$1) })
+    return a.sorted(by: { $0.0 < $1.0 })
 }
 
 func findFactor(num: Int) -> [Int] {
@@ -512,5 +515,4 @@ func getSay(_ num: String) -> String {
     }
     return result
 }
-
 //: [Next](@next)

@@ -5,8 +5,13 @@
  ## Others:
  1. [Hard](Hard)
  2. [Linked List](LinkedList)
+ 
+ >Codewars only support Swift 3 for now.
  */
-import UIKit
+
+import PlaygroundSupport
+
+PlaygroundPage.current.needsIndefiniteExecution = true
 
 //https://www.codewars.com/kata/55bf01e5a717a0d57e0000ec
 func persistence(for num: Int) -> Int {
@@ -678,4 +683,17 @@ func whatCentury(_ year: String) -> String {
 func howManyPizzas(_ n: Int) -> String {
     let pizza = pow(Double(n)/2.0,2.0)/(pow(4.0, 2.0)*(45/360))
     return "pizzas: \(Int(pizza/8)), slices: \(Int(pizza)%8)"
+}
+
+//https://www.codewars.com/kata/56cac350145912e68b0006f0/train/swift
+func arrange(_ s: String) -> String {
+    var arr = s.split(separator: " ")
+//    var arr = s.components(separatedBy: " ")
+    (0...arr.count-2).forEach {
+        if ($0%2 == 0 && arr[$0].count > arr[$0+1].count) || ($0%2 != 0 && arr[$0].count < arr[$0+1].count) {
+            arr.swapAt($0, $0+1)
+//            swap(&arr[$0], &arr[$0+1])
+        }
+    }
+    return arr.enumerated().map({ $0%2 == 0 ? $1.lowercased() : $1.uppercased() }).joined(separator: " ")
 }
