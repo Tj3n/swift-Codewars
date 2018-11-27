@@ -6,10 +6,10 @@
  1. [Normal](Normal)
  2. [Linked List](LinkedList)
  */
-
+import Foundation
 import PlaygroundSupport
 
-PlaygroundPage.current.needsIndefiniteExecution = true
+//PlaygroundPage.current.needsIndefiniteExecution = true
 
 //https://www.codewars.com/kata/55be10de92aad5ef28000023/train/swift
 //FML

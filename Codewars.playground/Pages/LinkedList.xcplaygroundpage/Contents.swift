@@ -9,7 +9,7 @@
 
 import PlaygroundSupport
 
-PlaygroundPage.current.needsIndefiniteExecution = true
+//PlaygroundPage.current.needsIndefiniteExecution = true
 
 enum SomeError: Error {
     case outOfBounds

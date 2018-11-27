@@ -8,10 +8,10 @@
  
  >Codewars only support Swift 3 for now.
  */
-
+import Foundation
 import PlaygroundSupport
 
-PlaygroundPage.current.needsIndefiniteExecution = true
+//PlaygroundPage.current.needsIndefiniteExecution = true
 
 //https://www.codewars.com/kata/55bf01e5a717a0d57e0000ec
 func persistence(for num: Int) -> Int {
@@ -696,4 +696,28 @@ func arrange(_ s: String) -> String {
         }
     }
     return arr.enumerated().map({ $0%2 == 0 ? $1.lowercased() : $1.uppercased() }).joined(separator: " ")
+}
+
+//https://www.codewars.com/kata/find-the-missing-term-in-an-arithmetic-progression/train/swift
+func findMissing(_ l:[Int]) -> Int {
+    let isProgressing = l[1] > l[0]
+    var progressingValue = 0
+    var result = 0
+    
+    for i in 0..<l.count-1 {
+        let progressing = l[i+1]-l[i]
+        if progressingValue == 0 {
+            progressingValue = progressing
+        }
+        
+        if progressing > progressingValue {
+            result = isProgressing ? l[i]+progressingValue : l[i]-progressing
+            break
+        } else if progressing < progressingValue {
+            result = isProgressing ? l[i]-progressing : l[i]+progressingValue
+            break
+        }
+    }
+    
+    return result
 }
