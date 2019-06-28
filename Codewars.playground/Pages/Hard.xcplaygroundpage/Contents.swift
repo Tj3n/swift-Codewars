@@ -49,7 +49,7 @@ func betterCheckChoose(_ m: Int, _ n: Int) -> Int {
 
 //https://www.codewars.com/kata/ease-the-stockbroker
 func balanceStatements(_ list: String) -> String {
-    guard list.characters.count > 0  else { return "Buy: 0 Sell: 0" }
+    guard list.count > 0  else { return "Buy: 0 Sell: 0" }
     let arr = list.components(separatedBy: ",")
     var badOrder = [String]()
     var totalBuy = 0.0
@@ -69,7 +69,7 @@ func balanceStatements(_ list: String) -> String {
             for (i,comp) in splited.enumerated() {
                 switch i {
                 case 0:
-                    if Int(comp) != nil && comp.characters.count > 1 {
+                    if Int(comp) != nil && comp.count > 1 {
                         isBad = true
                     }
                 case 1:
@@ -159,7 +159,7 @@ func checkValid(_ a: Int64, _ b: Int64, _ c: Int64, _ d: Int64, num: Int64) -> B
 func movingShift(_ s: String, _ shift: Int) -> [String] {
     
     let cipher = caesarShift(string: s, shift: shift, reverse: false)
-    let stringArr = cipher.characters.map({ String($0) })
+    let stringArr = cipher.map({ String($0) })
     
     let splitRange = stringArr.count%5 == 0 ? stringArr.count/5 : (stringArr.count-stringArr.count%5+5)/5
     var splitedArr = [String]()
@@ -185,7 +185,7 @@ func demovingShift(_ arr: [String], _ shift: Int) -> String {
 
 func caesarShift(string: String, shift: Int, reverse: Bool) -> String {
     var shifted = shift
-    var stringArr = string.characters.map({ String($0) })
+    var stringArr = string.map({ String($0) })
     
     var letters = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
     var uLetters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"]
@@ -243,7 +243,7 @@ func checkMatches(for regex: String, in text: String) -> [String] {
     do {
         let regex = try NSRegularExpression(pattern: regex, options: .caseInsensitive)
         let nsString = NSString(string: text)
-        let result = regex.matches(in: text, options: [], range: NSMakeRange(0, text.characters.count))
+        let result = regex.matches(in: text, options: [], range: NSMakeRange(0, text.count))
         return result.map { nsString.substring(with: $0.range) }
     } catch let error {
         print("invalid regex: \(error.localizedDescription)")
@@ -253,7 +253,7 @@ func checkMatches(for regex: String, in text: String) -> [String] {
 
 //https://www.codewars.com/kata/salesmans-travel/train/swift
 func travel(_ r: String, zipcode: String) -> String {
-    guard zipcode.characters.count == 8 else { return "\(zipcode):/" }
+    guard zipcode.count == 8 else { return "\(zipcode):/" }
     var ar = r.components(separatedBy: ",")
     var indexToRemove = [Int]()
     for (index, add) in ar.enumerated() {
@@ -501,7 +501,7 @@ func getLines(_ num:Int?) -> String {
 func getSay(_ num: String) -> String {
     var counter = 0
     var result = ""
-    var arr = num.characters.map { String($0) }
+    var arr = num.map { String($0) }
     arr.append("")
     var char = arr[0]
     for i in arr {
@@ -514,5 +514,59 @@ func getSay(_ num: String) -> String {
         }
     }
     return result
+}
+
+//https://leetcode.com/problems/multiply-strings/
+func multiply(_ num1: String, _ num2: String) -> String {
+    var result = Array(repeating: 0, count: num1.count + num2.count)
+    let arr1 = num1.reversed()
+    let arr2 = num2.reversed()
+    
+    for (i, a) in arr1.enumerated() {
+        let a = Int(String(a))!
+        var carry = 0
+        for (j, b) in arr2.enumerated() {
+            let b = Int(String(b))!
+            let r = result[i + j] + a * b + carry
+            result[i + j] = r % 10
+            carry = r / 10
+        }
+        while carry > 0 {
+            let r = result[i + num2.count] + carry
+            result[i + num2.count] = r % 10
+            carry = r / 10
+        }
+    }
+    
+    let resStr = result.reversed().dropFirst().map{ String($0) }.joined()
+    return resStr.count > 0 ? resStr : "0"
+}
+
+//https://leetcode.com/problems/longest-substring-without-repeating-characters/
+func lengthOfLongestSubstring(_ s: String) -> Int {
+    var maxS = 0
+    var curS = 0
+    var indexDict = [String: Int]()
+    var lastCut = 0
+    for (i, c) in s.enumerated() {
+        let c = String(c)
+        if let cs = indexDict[c] {
+            if cs >= lastCut {
+                curS = i - cs
+                lastCut = cs
+            } else {
+                curS+=1
+            }
+        } else {
+            curS+=1
+        }
+        
+        indexDict[c] = i
+        
+        if curS > maxS {
+            maxS = curS
+        }
+    }
+    return maxS
 }
 //: [Next](@next)

@@ -345,3 +345,48 @@ func SortedIntersect(first:Node?, second:Node?) -> Node? {
     }
     return result.next
 }
+
+//https://leetcode.com/problems/add-two-numbers/
+func addTwoNumbers(_ l1: Node?, _ l2: Node?) -> Node? {
+    let l1Val = l1?.data ?? 0
+    let l2Val = l2?.data ?? 0
+    let sum = l1Val+l2Val
+    let isOver10 = sum >= 10 ? true : false
+    let sumNode = Node(sum >= 10 ? sum-10 : sum )
+    if let next1 = l1?.next {
+        next1.data = isOver10 ? next1.data+1 : next1.data
+        sumNode.next = addTwoNumbers(next1, l2?.next)
+    } else if let next2 = l2?.next {
+        next2.data = isOver10 ? next2.data+1 : next2.data
+        sumNode.next = addTwoNumbers(l1?.next, next2)
+    } else if isOver10 {
+        sumNode.next = Node(1)
+    }
+    return sumNode
+}
+
+func addTwoNumbersaa(_ l1: Node?, _ l2: Node?) -> Node? {
+    let firstSum = (l1?.data ?? 0)+(l2?.data ?? 0)
+    let sumNode = Node(firstSum >= 10 ? firstSum-10 : firstSum)
+    var currentNode: Node? = sumNode
+    var isOver10 = firstSum>=10 ? true : false
+    var l1 = l1?.next
+    var l2 = l2?.next
+    
+    while l1 != nil || l2 != nil {
+        var curSum = (l1?.data ?? 0) + (l2?.data ?? 0)
+        if isOver10 {
+            curSum+=1
+        }
+        isOver10 = curSum >= 10 ? true : false
+        currentNode?.next = Node(curSum >= 10 ? curSum-10 : curSum)
+        currentNode = currentNode?.next
+        l1 = l1?.next
+        l2 = l2?.next
+    }
+    if isOver10 {
+        currentNode?.next = Node(1)
+    }
+    
+    return sumNode
+}
