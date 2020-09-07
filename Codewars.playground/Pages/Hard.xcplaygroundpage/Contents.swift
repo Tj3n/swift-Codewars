@@ -197,17 +197,17 @@ func caesarShift(string: String, shift: Int, reverse: Bool) -> String {
     
     for (i, char) in stringArr.enumerated() {
         if letters.contains(char) {
-            if letters.index(of: char)!+shifted >= letters.count {
-                stringArr[i] = letters[(letters.index(of: char)!+shifted)-letters.count]
+            if letters.firstIndex(of: char)!+shifted >= letters.count {
+                stringArr[i] = letters[(letters.firstIndex(of: char)!+shifted)-letters.count]
             } else {
-                stringArr[i] = letters[letters.index(of: char)!+shifted]
+                stringArr[i] = letters[letters.firstIndex(of: char)!+shifted]
             }
             
         } else if uLetters.contains(char) {
-            if uLetters.index(of: char)!+shifted >= uLetters.count {
-                stringArr[i] = uLetters[(uLetters.index(of: char)!+shifted)-uLetters.count]
+            if uLetters.firstIndex(of: char)!+shifted >= uLetters.count {
+                stringArr[i] = uLetters[(uLetters.firstIndex(of: char)!+shifted)-uLetters.count]
             } else {
-                stringArr[i] = uLetters[uLetters.index(of: char)!+shifted]
+                stringArr[i] = uLetters[uLetters.firstIndex(of: char)!+shifted]
             }
         }
         

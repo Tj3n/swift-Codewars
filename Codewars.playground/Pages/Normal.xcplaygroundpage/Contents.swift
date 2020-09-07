@@ -17,9 +17,9 @@ import PlaygroundSupport
 func persistence(for num: Int) -> Int {
     var numString = "\(num)"
     var times = 0
-    while numString.characters.count > 1 {
+    while numString.count > 1 {
         var val = 1
-        for singleDigit in numString.characters {
+        for singleDigit in numString {
             val = val*Int(String(singleDigit))!
         }
         numString = "\(val)"
@@ -32,11 +32,11 @@ func persistence(for num: Int) -> Int {
 func dashatize(_ number: Int) -> String {
     var numString = "\(number > 0 ? number : -number)"
     var dashatize = ""
-    for singleDigit in numString.characters {
+    for singleDigit in numString {
         if Int(String(singleDigit))! % 2 == 0 {
             dashatize.append(singleDigit)
         } else {
-            if dashatize.characters.last == Character("-") {
+            if dashatize.last == Character("-") {
                 dashatize.append("\(String(singleDigit))-")
             } else {
                 dashatize.append("-\(String(singleDigit))-")
@@ -51,7 +51,7 @@ func digPow(for number: Int, using power: Int) -> Int {
     let numString = String(number)
     var total = 0
     var counter = power
-    for digit in numString.characters {
+    for digit in numString {
         total += Int(pow(Double(String(digit))!,Double(counter)))
         counter += 1
     }
@@ -78,13 +78,13 @@ func findSum(_ n: Int) -> Int {
 
 //https://www.codewars.com/kata/5467e4d82edf8bbf40000155
 func descendingOrder(of number: Int) -> Int {
-    let sortedCharacters = String(number).characters.sorted { $0 > $1 }
+    let sortedCharacters = String(number).sorted { $0 > $1 }
     return Int(String(sortedCharacters))!
 }
 
 //https://www.codewars.com/kata/5667e8f4e3f572a8f2000039
 func accum(_ s: String) -> String {
-    return s.characters.enumerated().map { (index, element) in
+    return s.enumerated().map { (index, element) in
         return String(element).uppercased().padding(toLength: index+1, withPad: String(element).lowercased(), startingAt: 0)
         }.joined(separator: "-")
 }
@@ -102,7 +102,7 @@ func evenOrOdd(_ number:Int) -> String {
 
 //https://www.codewars.com/kata/5583090cbe83f4fd8c000051
 func digitize(_ num:Int) -> [Int] {
-    return String(num).characters.map({ Int(String($0))! }).reversed()
+    return String(num).map({ Int(String($0))! }).reversed()
 }
 
 //https://www.codewars.com/kata/577b9960df78c19bca00007e
@@ -111,7 +111,7 @@ func findDigit(_ num:Int, _ nth: Int) -> Int {
         return -1
     }
     let numString = String(num)
-    guard numString.characters.count >= nth else { return 0 }
+    guard numString.count >= nth else { return 0 }
     if let i = Int(String(numString[numString.index(numString.endIndex, offsetBy: -nth)])) {
         return i
     } else {
@@ -187,7 +187,7 @@ func diamond(_ size: Int) -> String? {
         } else {
             sub += String(repeatElement("*", count:  i)) + "\n"
         }
-        a.insert(contentsOf: sub.characters, at: a.index(a.startIndex, offsetBy: (a.characters.count+1)/2))
+        a.insert(contentsOf: sub, at: a.index(a.startIndex, offsetBy: (a.count+1)/2))
     }
     return a
 }
@@ -209,9 +209,9 @@ func triangular(_ n: Int) -> Int{
 //https://www.codewars.com/kata/5842df8ccbd22792a4000245/train/swift
 func expandedForm(_ num: Int) -> String {
     var expandStr = ""
-    for (index, numChar) in String(num).characters.enumerated() {
+    for (index, numChar) in String(num).enumerated() {
         if Int(String(numChar)) != 0 {
-            expandStr += (" + " + String(numChar) + String(repeatElement("0", count: String(num).characters.count-index-1)))
+            expandStr += (" + " + String(numChar) + String(repeatElement("0", count: String(num).count-index-1)))
         }
     }
     return expandStr.substring(from: expandStr.index(expandStr.startIndex, offsetBy: 3))
@@ -307,11 +307,11 @@ func fizzBuzzCuckooClock(_ time: String) -> String {
 
 //https://www.hackerrank.com/challenges/abbr
 func abbreviation(input: String, abbreviation: String) -> Bool {
-    let inputCharArrayCap = input.characters.map({String($0).capitalized})
-    let abbCharArray = abbreviation.characters.map({String($0)})
+    let inputCharArrayCap = input.map({String($0).capitalized})
+    let abbCharArray = abbreviation.map({String($0)})
     
     let similar = abbCharArray.filter({inputCharArrayCap.contains($0)})
-    if similar.count != abbreviation.characters.count { return false }
+    if similar.count != abbreviation.count { return false }
     
     var similarInInput = inputCharArrayCap.filter({abbCharArray.contains($0)})
     
@@ -397,8 +397,8 @@ func checkDir(arr: [String]) -> [String] {
 func thirt(_ n: Int) -> Int {
     let pttr = [1, 10, 9, 12, 3, 4]
     var numStr = String(n)
-    while numStr.characters.count > 2 {
-        let a = numStr.characters.reversed().map({Int(String($0))!}).enumerated().reduce(0) { (result, val) -> Int in
+    while numStr.count > 2 {
+        let a = numStr.reversed().map({Int(String($0))!}).enumerated().reduce(0) { (result, val) -> Int in
             return result + val.element*pttr[val.offset%6]
         }
         numStr = String(a)
@@ -413,7 +413,7 @@ func comp(_ a: [Int], _ b: [Int]) -> Bool {
     let c = a.map({ $0*$0 })
     c.forEach({
         if d.contains($0) {
-            d.remove(at: d.index(of: $0)!)
+            d.remove(at: d.firstIndex(of: $0)!)
         }
     })
     return d.count == 0
@@ -439,11 +439,11 @@ func race(_ v1: Int, _ v2: Int, _ g: Int) -> [Int]? {
 //https://www.codewars.com/kata/5616868c81a0f281e500005c/train/swift
 func rank(_ st: String, _ we: [Int], _ n: Int) -> String {
     let xs = (0..<26).map({Character(UnicodeScalar("a".unicodeScalars.first!.value + $0)!)})
-    guard st.characters.count > 0 else { return "No participants" }
+    guard st.count > 0 else { return "No participants" }
     let list = st.components(separatedBy: ",")
     guard list.count >= n else { return "Not enough participants" }
     let ranked = list.enumerated().map { (index, name) -> (String, Int) in
-        return (name, we[index]*(name.characters.count + name.lowercased().characters.reduce(0, { ($0+1)+xs.index(of: $1)! })))
+        return (name, we[index]*(name.count + name.lowercased().reduce(0, { ($0+1)+xs.firstIndex(of: $1)! })))
         }.sorted { (first, second) -> Bool in
             if first.1 != second.1 {
                 return first.1 > second.1
@@ -503,7 +503,7 @@ func nbMonths(_ startPriceOld: Int, _ startPriceNew: Int, _ savingPerMonth: Int,
 //https://www.codewars.com/kata/toleetspeak/train/swift
 func toLeetSpeak(_ s : String) -> String {
     let list = ["A" : "@","B" : "8","C" : "(","E" : "3","G" : "6","H" : "#","I" : "!","L" : "1","O" : "0","S" : "$","T" : "7","Z" : "2"]
-    return s.characters.map({ list[String($0)] ?? String($0) }).joined()
+    return s.map({ list[String($0)] ?? String($0) }).joined()
 }
 
 //https://www.codewars.com/kata/56a5d994ac971f1ac500003e/train/swift
@@ -512,7 +512,7 @@ func longestConsec(_ strarr: [String], _ k: Int) -> String {
     var longest = 0
     var result = ""
     for i in 0...(strarr.count - k) {
-        let total = (0..<k).reduce(0, { $0+strarr[i+$1].characters.count })
+        let total = (0..<k).reduce(0, { $0+strarr[i+$1].count })
         if total > longest {
             longest = total
             result = (0..<k).reduce("", { $0+strarr[i+$1] })
@@ -540,7 +540,7 @@ func stockList(_ listOfArt: [String], _ listOfCat: [String]) -> String {
     let result = listOfCat.map { (char) -> String in
         var val = 0
         for art in listOfArt {
-            if String(art.characters.first!) == char {
+            if String(art.first!) == char {
                 val+=Int(art.components(separatedBy: " ")[1])!
             }
         }
@@ -587,8 +587,8 @@ func flattenOneLevel(_ arr:[Any]) -> [Any] {
 func orderWeight(_ s: String) -> String {
     let arr = s.components(separatedBy: " ")
     let result = arr.sorted { (first, second) -> Bool in
-        let a = first.characters.reduce(0, { Int(String($0))! + Int(String($1))! })
-        let b = second.characters.reduce(0, { Int(String($0))! + Int(String($1))! })
+        let a = first.reduce(0, { Int(String($0))! + Int(String($1))! })
+        let b = second.reduce(0, { Int(String($0))! + Int(String($1))! })
         return a == b ? first < second : a < b
     }
     return result.joined(separator: " ")
@@ -614,8 +614,8 @@ func foldArray(_ arr: [Int], times: Int) -> [Int] {
 //https://www.codewars.com/kata/sum-of-digits-slash-digital-root/train/swift
 func digitalRoot(of number: Int) -> Int {
     var num = String(number)
-    while num.characters.count > 1 {
-        num = String(num.characters.reduce(0, { $0+Int(String($1))! }))
+    while num.count > 1 {
+        num = String(num.reduce(0, { $0+Int(String($1))! }))
     }
     return Int(num)!
 }
@@ -721,3 +721,49 @@ func findMissing(_ l:[Int]) -> Int {
     
     return result
 }
+
+func reverseRect(n: Int) {
+    var count = 1
+    var d = 0
+    var row = n-1
+    var col = n-1
+    var result = [[Int]](repeating: [Int](repeating: 0, count: n), count: n)
+    
+    //Use stride to prevent exception with range up > low
+    while d <= n/2 {
+        //left to right col
+        for i in stride(from: d, through: col, by: 1) {
+            result[d][i] = count
+            count+=1
+        }
+        
+        //top to down row
+        for i in stride(from: d+1, through: row, by: 1) {
+            result[i][col] = count
+            count+=1
+        }
+
+        //right to left col
+        for i in stride(from: col-1, through: d, by: -1) {
+            result[row][i] = count
+            count+=1
+        }
+
+        //down to up row
+        for i in stride(from: row-1, to: d, by: -1) {
+            result[i][d] = count;
+            count+=1
+        }
+
+        d+=1
+        row-=1
+        col-=1
+    }
+    
+    for i in result {
+        print(i)
+    }
+}
+//reverseRect(n: 4)
+//reverseRect(n: 3)
+//reverseRect(n: 6)
