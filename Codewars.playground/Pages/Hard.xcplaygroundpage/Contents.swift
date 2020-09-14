@@ -11,6 +11,58 @@ import PlaygroundSupport
 
 //PlaygroundPage.current.needsIndefiniteExecution = true
 
+//Find max sum subarray
+let arr = [-2, -3, 4, -1, -2, 1, 5, -3]
+func maxSubArraySum(_ arr: [Int]) -> [Int] {
+    guard arr.count > 0 else { return [] }
+    var maxSoFar = arr[0]
+    var maxEndHere = 0
+    var start = 0
+    var end = 0
+    var s = 0
+    
+    for (i, val) in arr.enumerated() {
+        maxEndHere += val
+        if maxSoFar < maxEndHere {
+            maxSoFar = maxEndHere
+            start = s
+            end = i
+        }
+        
+        if maxEndHere < 0 {
+            maxEndHere = 0
+            s = i+1
+        }
+    }
+    
+    return Array(arr[start...end])
+}
+maxSubArraySum(arr)
+
+//Find subarray sum equal x
+let arr2 = [15, -2, 2, -8, 1, 7, 10]
+func findSubarray(_ arr: [Int], targetSum: Int) -> [Int] {
+    var sumDict = [Int: Int]()
+    var sum = 0
+    
+    for (i, val) in arr.enumerated() {
+        sum += val
+        
+        if sum == targetSum {
+            return Array(arr[...i])
+        }
+        
+        let check = sum - targetSum
+        if let sumIdx = sumDict[check] {
+            return Array(arr[sumIdx...i])
+        } else {
+            sumDict[sum] = i
+        }
+    }
+    return []
+}
+findSubarray(arr2, targetSum: 17)
+
 //https://www.codewars.com/kata/55be10de92aad5ef28000023/train/swift
 //FML
 func checkChoose(_ m: Int, _ n: Int) -> Int {
