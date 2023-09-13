@@ -5,5 +5,7 @@
         <page name='Hard'/>
         <page name='LinkedList'/>
         <page name='Animation'/>
+        <page name='Combine'/>
+        <page name='Leetcode'/>
     </pages>
 </playground>
