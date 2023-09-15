@@ -2,6 +2,264 @@
 
 import Foundation
 
+// https://leetcode.com/problems/substring-with-concatenation-of-all-words/
+func findSubstring(_ s: String, _ words: [String]) -> [Int] {
+    let l = words.first!.count
+    let length = words.count * l
+    if s.count - length < 0 {
+        return []
+    }
+    
+    var arr = Array(s)
+    var ret = [Int]()
+    let w = words.reduce(into: [String: Int]()) { partialResult, w in
+        let c = words.filter({ $0 == w }).count
+        partialResult[w] = c
+    }
+    
+    var ww = w
+    for i in 0...s.count-length {
+        let ss = arr[i..<i+l].map({ String($0) }).joined()
+        if let _ = ww[ss] {
+            // Start checking the rest
+            var n = i
+            for _ in 0..<words.count {
+                print(n, n+l, arr.count, words.count)
+                let v = arr[n..<n+l].map({ String($0) }).joined()
+                if let c = ww[v] {
+                    ww[v] = c - 1
+                    if c - 1 <= 0 {
+                        ww.removeValue(forKey: v)
+                    }
+                    n += l
+                } else {
+                    ww = w
+                    break
+                }
+            }
+            
+            if ww.isEmpty {
+                ret.append(i)
+                ww = w
+            }
+        } else {
+            ww = w
+        }
+    }
+    
+    // time limit exceeded
+//    let w = Set(permutations(of: words).map({ $0.joined() }))
+//    for i in 0...s.count-length {
+//        if w.contains(arr[i..<i+length].map({ String($0) }).joined()) {
+//            ret.append(i)
+//        }
+//    }
+    
+    return ret
+}
+
+func permutations(of array: [String]) -> [[String]] {
+    guard array.count > 1 else { return [array] }
+    
+    var perms = [[String]]()
+    for i in 0 ..< array.count {
+        let remaining = array.enumerated().filter { $0.offset != i }.map({ $0.element })
+        let permutationsOfRemaining = permutations(of: remaining)
+
+        for perm in permutationsOfRemaining {
+            perms.append([array[i]] + perm)
+        }
+      }
+
+    return perms
+}
+
+findSubstring("aaa", ["a", "a"])
+//findSubstring("wordgoodgoodgoodbestword", ["word","good","best","good"]) // [8]
+//findSubstring("barfoofoobarthefoobarman", ["bar","foo","the"]) // [6, 9, 12]
+
+// https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/
+func strStr(_ haystack: String, _ needle: String) -> Int {
+//    guard let i = haystack.firstRange(of: needle) else {
+//        return -1
+//    }
+//    return haystack.distance(from: haystack.startIndex, to: i.lowerBound)
+    
+    if needle.count > haystack.count || haystack.count == 0 {
+        return -1
+    }
+    
+    let arr = Array(haystack)
+    
+    for i in 0..<haystack.count {
+        if i+needle.count <= arr.count &&
+            arr[i] == needle.first! &&
+            arr[i..<i+needle.count].map({ String($0) }).joined() == needle {
+            return i
+        }
+    }
+    return -1
+}
+
+strStr("mississipi", "issip")
+
+// https://leetcode.com/problems/climbing-stairs/
+func climbStairs(_ n: Int) -> Int {
+    if n == 1 {
+        return 1
+    } else if n == 2 {
+        return 2
+    } else if n > 45 {
+        return 0
+    }
+    
+    var d = [1: 1, 2: 2]
+    
+    // x=n-1 + n-2, n=3 -> x=n(1)+n(2) == 3
+    var k = 3
+    var ret = 0
+    while k <= n {
+        ret = d[k-1]! + d[k-2]!
+        d[k] = ret
+        k += 1
+    }
+    
+    return ret
+}
+
+//climbStairs(4) // 5
+
+// https://leetcode.com/problems/longest-consecutive-sequence
+func longestConsecutive(_ nums: [Int]) -> Int {
+    var s = Set(nums)
+    var ret = 0
+    
+    for i in s {
+        if s.contains(i-1) {
+            continue
+        }
+        
+        var c = 1
+        while s.contains(i+c) {
+            c += 1
+        }
+        if c > ret {
+            ret = c
+        }
+    }
+    
+    return ret
+}
+
+//longestConsecutive([100,4,200,1,3,2]) // [1,2,3,4] = 4
+
+// https://leetcode.com/problems/kth-largest-element-in-an-array/
+func findKthLargest(_ nums: [Int], _ k: Int) -> Int {
+    return nums.sorted(by: >)[k-1]
+}
+
+//findKthLargest([3,2,1,5,6,4], 2) // 5
+
+// https://leetcode.com/problems/longest-common-prefix/
+func longestCommonPrefix(_ strs: [String]) -> String {
+    if strs.count == 1 {
+        return strs.first!
+    }
+
+    var test = strs.first!
+    var ret = ""
+    for i in 0...test.count {
+        var match = 0
+        for s in strs.suffix(from: 1) {
+            if s.prefix(i) == test.prefix(i) {
+                match += 1
+            } else {
+                break
+            }
+        }
+    
+        if match == strs.count-1 {
+            ret = String(test.prefix(i))
+        } else {
+            return ret
+        }
+    }
+
+    return ret
+}
+
+//longestCommonPrefix(["flower","flow","flight"]) // fl
+//longestCommonPrefix(["flower","flower","flower","flower"])
+
+// https://leetcode.com/problems/remove-duplicates-from-sorted-array/
+func removeDuplicates(_ nums: inout [Int]) -> Int {
+    var test: Int
+    for i in 0..<nums.count-1 {
+        if i >= nums.count-1 {
+            break
+        }
+        
+        test = nums[i]
+        
+        var j = 1
+        while i+j < nums.count && test == nums[i+j] {
+            j+=1
+        }
+        
+        if j > 1 {
+            nums.removeSubrange(i..<i+j-1)
+        }
+    }
+    
+    return nums.count
+}
+
+//var nums = [0,0,1,1,1,2,2,3,3,4]
+//var nums = [1,1,1]
+//removeDuplicates(&nums) // 5, nums = [0,1,2,3,4,_,_,_,_,_]
+//print(nums)
+
+// https://leetcode.com/problems/valid-anagram/
+func isAnagram(_ s: String, _ t: String) -> Bool {
+    // return s.sorted() == t.sorted()
+    
+    var dict = [Character: Int]() // char: count
+    
+    for i in Array(s) {
+        dict[i] = dict[i] != nil ? dict[i]!+1 : 1
+    }
+    
+    for j in Array(t) {
+        if let c = dict[j], c > 0 {
+            if c == 1 {
+                dict.removeValue(forKey: j)
+            } else {
+                dict[j] = c - 1
+            }
+        } else {
+            return false
+        }
+    }
+    
+    return dict.isEmpty
+}
+
+//isAnagram("anagram", "nagaram") // true
+
+// https://leetcode.com/problems/valid-palindrome/
+func isPalindrome(_ s: String) -> Bool {
+    let ss = Array(s.lowercased().unicodeScalars.filter({ CharacterSet.alphanumerics.contains($0) }))
+    for i in 0..<ss.count/2 {
+        if ss[i] != ss[ss.count-i-1] {
+            return false
+        }
+    }
+    
+    return true
+}
+
+//isPalindrome("A man, a plan, a canal: Panama") // true
+
 // https://leetcode.com/problems/merge-sorted-array/
 func merge(_ nums1: inout [Int], _ m: Int, _ nums2: [Int], _ n: Int) {
     var ret = nums1.prefix(upTo: m)
