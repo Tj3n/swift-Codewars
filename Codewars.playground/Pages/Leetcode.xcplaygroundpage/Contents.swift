@@ -2,6 +2,70 @@
 
 import Foundation
 
+// https://leetcode.com/problems/longest-valid-parentheses/
+func longestValidParentheses(_ s: String) -> Int {
+    // Push all "(" in a stack with their index,
+    // then when meet ")", pop the stack until find coressponding "(" and replace the range of "("...")" with 1
+    // then return the longest subarray of 1
+    var rets = Array.init(repeating: 0, count: s.count)
+    var stack = [(Int, String.Element)]()
+    for (i, c) in s.enumerated() {
+        if stack.isEmpty || c == "(" {
+            stack.append((i, c))
+        } else {
+//            print(stack)
+            if let last = stack.last, last.1 == "(" {
+                rets.replaceSubrange(last.0...i, with: Array(repeating: 1, count: i-last.0+1))
+            }
+            stack.popLast()
+        }
+    }
+    
+    var ret = 0
+    var count = 0
+    for i in rets {
+        if i == 1 {
+            count += 1
+            ret = max(count, ret)
+        } else {
+            count = 0
+        }
+    }
+    
+//    print(rets)
+    return ret
+}
+
+longestValidParentheses("()))()()))") // 4
+//longestValidParentheses("()(())") // 6
+
+// https://leetcode.com/problems/next-permutation/
+func nextPermutation(_ nums: inout [Int]) {
+//    Find the highest index i such that arr[i] < arr[i+1]. If no such index exists, the permutation is the last permutation.
+//    Find the highest index j > i such that arr[j] > arr[i]. Such a j must exist, since i+1 is such an index.
+//    Swap arr[i] with arr[j].
+//    Reverse the order of all of the elements after index i till the last element.
+    
+    var i = nums.count - 2
+    while i >= 0 && nums[i] >= nums[i + 1] {
+        i -= 1
+    }
+    if i >= 0 {
+        var j = nums.count - 1
+        while j >= 0 && nums[j] <= nums[i] {
+            j -= 1
+        }
+        print(nums[i], nums[j])
+        nums.swapAt(i, j)
+    }
+    nums[(i + 1)...].reverse()
+}
+
+//var nums = [4,3,2,5,4,3,1] // [4,3,3,1,2,4,5]
+var nums = [3,1,4,2]
+nextPermutation(&nums)
+print(nums)
+
 // https://leetcode.com/problems/substring-with-concatenation-of-all-words/
 func findSubstring(_ s: String, _ words: [String]) -> [Int] {
     let l = words.first!.count
