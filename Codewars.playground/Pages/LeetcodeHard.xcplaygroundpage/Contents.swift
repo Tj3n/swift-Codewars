@@ -2,6 +2,83 @@
 
 import Foundation
 
+// https://leetcode.com/problems/minimum-window-substring/
+func minWindow(_ s: String, _ t: String) -> String {
+    // o(n): m+n = t.length + s.length, use sliding window
+    var l = 0
+    var r = 0
+    var retl = -1
+    var retr = -1
+    
+    if s.count < t.count {
+        return ""
+    }
+    
+    // Turn t into map of character & count
+    let need = t.reduce(into: [Character: Int]()) { partialResult, c in
+        partialResult[c] = (partialResult[c] ?? 0) + 1
+    }
+    print(need)
+    
+    let ss = Array(s)
+    var sum = t.count // <=== have to count backward not foward
+    var match = need // <=== have to count backward not foward
+    
+    while r < ss.count {
+        let rc = ss[r]
+        if let v = match[rc] {
+            if v > 0 {
+                // Finding the first valid string
+                sum -= 1
+            }
+            
+            match[rc]! -= 1
+            if sum == 0 {
+                // From the first time found a valid string, always maintain the l r bounds
+                // Increase r until found extra matches
+                
+                while l < r {
+                    // Then starting to increase l bound
+                    let lc = ss[l]
+                    if let lv = match[lc] {
+                        if lv == 0 {
+                            // Until the match no longer satisfied: the count of this character is matched and cannot be removed anymore)
+                            break
+                        } else {
+                            // Else just ignore or increase the match value til reached 0
+                            match[lc] = lv+1
+                        }
+                    }
+                    
+                    l += 1
+                }
+                
+                print(l, r, match, ss[l...r].map({ String($0) }).joined())
+                if retl == -1 || r-l < retr-retl {
+                    // compare and find min length
+                    retl = l
+                    retr = r
+                }
+            }
+        }
+        
+        r+=1
+    }
+    
+    if retl == -1 {
+        return ""
+    }
+    
+    return ss[retl...retr].map({ String($0) }).joined()
+}
+
+//minWindow("ADOBECODEBANC", "ABC")
+//minWindow("ADOBACODEBANC", "ABC")
+//minWindow("ADOABCODEBANC", "ABC")
+//minWindow("a", "aa")
+//minWindow("a", "b")
+//minWindow("caccaacaaaabbcaccaccc", "acccacbccc")
+
 // https://leetcode.com/problems/text-justification/
 func fullJustify(_ words: [String], _ maxWidth: Int) -> [String] {
     var rets = [String]()
