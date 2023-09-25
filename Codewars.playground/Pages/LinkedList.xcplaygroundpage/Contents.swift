@@ -85,6 +85,23 @@ func buildListFromArray(_ array: [Int]) -> Node {
     return node!
 }
 
+// https://leetcode.com/problems/middle-of-the-linked-list/
+func middleNode(_ head: Node?) -> Node? {
+    var count = 0
+    var node = head
+    while node?.next != nil {
+        count += 1
+        node = node!.next
+    }
+    
+    var ret = head
+    for _ in 0..<(count%2 == 0 ? count/2 : (count+1)/2) {
+        ret = ret?.next
+    }
+    
+    return ret
+}
+
 //http://www.codewars.com/kata/linked-lists-get-nth-node
 func getNth(_ head: Node?, _ index: Int) throws -> Node? {
     var current = head

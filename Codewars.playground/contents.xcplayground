@@ -7,5 +7,7 @@
         <page name='Animation'/>
         <page name='Combine'/>
         <page name='Leetcode'/>
+        <page name='LeetcodeMed'/>
+        <page name='LeetcodeHard'/>
     </pages>
 </playground>

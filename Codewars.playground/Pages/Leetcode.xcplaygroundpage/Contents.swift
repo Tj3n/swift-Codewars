@@ -2,145 +2,251 @@
 
 import Foundation
 
-// https://leetcode.com/problems/longest-valid-parentheses/
-func longestValidParentheses(_ s: String) -> Int {
-    // Push all "(" in a stack with their index,
-    // then when meet ")", pop the stack until find coressponding "(" and replace the range of "("...")" with 1
-    // then return the longest subarray of 1
-    var rets = Array.init(repeating: 0, count: s.count)
-    var stack = [(Int, String.Element)]()
-    for (i, c) in s.enumerated() {
-        if stack.isEmpty || c == "(" {
-            stack.append((i, c))
-        } else {
-//            print(stack)
-            if let last = stack.last, last.1 == "(" {
-                rets.replaceSubrange(last.0...i, with: Array(repeating: 1, count: i-last.0+1))
-            }
-            stack.popLast()
+// https://leetcode.com/problems/is-subsequence/
+func isSubsequence(_ s: String, _ t: String) -> Bool {
+    let ss = Array(s)
+    var i = 0
+    
+    if t.count < s.count { return false }
+    if s.count == 0 { return true }
+    
+    for c in t {
+        if c == ss[i] {
+            i += 1
+        }
+        
+        if i == s.count {
+            return true
         }
     }
     
+    return false
+}
+
+isSubsequence("abc", "ahbgdc")
+
+// https://leetcode.com/problems/roman-to-integer/
+func romanToInt(_ s: String) -> Int {
+    let roman = ["I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000, "IV": 4, "IX": 9, "XL": 40, "XC": 90, "CD": 400, "CM": 900]
+    let arr = Array(s)
     var ret = 0
+    var i = 0
+    
+    while i < arr.count {
+        if i != arr.count - 1, let j = roman[arr[i...i+1].map({ String($0) }).joined()] {
+            ret += j
+            i += 2
+        } else {
+            ret += roman[String(arr[i])]!
+            i += 1
+        }
+    }
+    
+    return ret
+}
+
+romanToInt("III")
+romanToInt("LVIII")
+romanToInt("MCMXCIV") // 1994
+
+// https://leetcode.com/problems/majority-element/
+func majorityElement(_ nums: [Int]) -> Int {
+    var max = 0
+    var ret = 0
+    
+    for i in nums {
+        if max == 0 {
+            ret = i
+        }
+        
+        if i == ret {
+            max += 1
+        } else {
+            max -= 1
+        }
+    }
+    return ret
+}
+
+majorityElement([2,2,1,1,1,2,2]) // 2
+
+// https://leetcode.com/problems/remove-element/
+func removeElement(_ nums: inout [Int], _ val: Int) -> Int {
     var count = 0
-    for i in rets {
-        if i == 1 {
+    var i = 0
+    
+    while i < nums.count {
+        if nums[i] == val {
+            nums.remove(at: i)
+        } else {
             count += 1
-            ret = max(count, ret)
-        } else {
-            count = 0
+            i += 1
         }
     }
     
-//    print(rets)
+    return count
+}
+
+//var nums = [0,1,2,2,3,0,4,2]
+//removeElement(&nums, 2) // 5
+//print(nums)
+
+// https://leetcode.com/problems/ransom-note/
+func canConstruct(_ ransomNote: String, _ magazine: String) -> Bool {
+    var dict = magazine.utf8CString.reduce(into: [CChar: Int]()) { partialResult, c in
+        if let v = partialResult[c] {
+            partialResult[c] = v+1
+        } else {
+            partialResult[c] = 1
+        }
+    }
+    
+    for c in ransomNote.utf8CString {
+        if let v = dict[c] {
+            if v-1 == 0 {
+                dict.removeValue(forKey: c)
+            } else {
+                dict[c] = v-1
+            }
+        } else {
+            return false
+        }
+    }
+    
+    return true
+}
+
+canConstruct("aa", "aba")
+
+// https://leetcode.com/problems/number-of-steps-to-reduce-a-number-to-zero/
+func numberOfSteps(_ num: Int) -> Int {
+    if num == 0 {
+        return 0
+    }
+    
+    var ret = 1
+    var s = num
+    while s != 1 {
+        if s % 2 == 0 {
+            s = s / 2
+            ret += 1
+        } else {
+            s = (s - 1) / 2
+            ret += 2
+        }
+    }
     return ret
 }
 
-longestValidParentheses("()))()()))") // 4
-//longestValidParentheses("()(())") // 6
+numberOfSteps(14) // 6
 
-// https://leetcode.com/problems/next-permutation/
-func nextPermutation(_ nums: inout [Int]) {
-//    Find the highest index i such that arr[i] < arr[i+1]. If no such index exists, the permutation is the last permutation.
-//    Find the highest index j > i such that arr[j] > arr[i]. Such a j must exist, since i+1 is such an index.
-//    Swap arr[i] with arr[j].
-//    Reverse the order of all of the elements after index i till the last element.
-    
-    var i = nums.count - 2
-    while i >= 0 && nums[i] >= nums[i + 1] {
-        i -= 1
-    }
-    if i >= 0 {
-        var j = nums.count - 1
-        while j >= 0 && nums[j] <= nums[i] {
-            j -= 1
+// https://leetcode.com/problems/fizz-buzz/
+func fizzBuzz(_ n: Int) -> [String] {
+    return (1...n).map({ i in
+        if i % 3 == 0 && i % 5 == 0 {
+            return "FizzBuzz"
+        } else if i % 3 == 0 {
+            return "Fizz"
+        } else if i % 5 == 0 {
+            return "Buzz"
+        } else {
+            return String(i)
         }
-        print(nums[i], nums[j])
-        nums.swapAt(i, j)
-    }
-    nums[(i + 1)...].reverse()
+    })
 }
 
-//var nums = [4,3,2,5,4,3,1] // [4,3,3,1,2,4,5]
-var nums = [3,1,4,2]
-nextPermutation(&nums)
-print(nums)
+fizzBuzz(15) //["1","2","Fizz","4","Buzz","Fizz","7","8","Fizz","Buzz","11","Fizz","13","14","FizzBuzz"]
 
-// https://leetcode.com/problems/substring-with-concatenation-of-all-words/
-func findSubstring(_ s: String, _ words: [String]) -> [Int] {
-    let l = words.first!.count
-    let length = words.count * l
-    if s.count - length < 0 {
-        return []
+// https://leetcode.com/problems/running-sum-of-1d-array/
+func runningSum(_ nums: [Int]) -> [Int] {
+    var ret = [nums.first!]
+    for i in 1..<nums.count {
+        ret.append(nums[i]+ret[i-1])
     }
-    
-    var arr = Array(s)
-    var ret = [Int]()
-    let w = words.reduce(into: [String: Int]()) { partialResult, w in
-        let c = words.filter({ $0 == w }).count
-        partialResult[w] = c
-    }
-    
-    var ww = w
-    for i in 0...s.count-length {
-        let ss = arr[i..<i+l].map({ String($0) }).joined()
-        if let _ = ww[ss] {
-            // Start checking the rest
-            var n = i
-            for _ in 0..<words.count {
-                print(n, n+l, arr.count, words.count)
-                let v = arr[n..<n+l].map({ String($0) }).joined()
-                if let c = ww[v] {
-                    ww[v] = c - 1
-                    if c - 1 <= 0 {
-                        ww.removeValue(forKey: v)
-                    }
-                    n += l
-                } else {
-                    ww = w
-                    break
-                }
-            }
-            
-            if ww.isEmpty {
-                ret.append(i)
-                ww = w
-            }
-        } else {
-            ww = w
-        }
-    }
-    
-    // time limit exceeded
-//    let w = Set(permutations(of: words).map({ $0.joined() }))
-//    for i in 0...s.count-length {
-//        if w.contains(arr[i..<i+length].map({ String($0) }).joined()) {
-//            ret.append(i)
-//        }
-//    }
     
     return ret
 }
 
-func permutations(of array: [String]) -> [[String]] {
-    guard array.count > 1 else { return [array] }
-    
-    var perms = [[String]]()
-    for i in 0 ..< array.count {
-        let remaining = array.enumerated().filter { $0.offset != i }.map({ $0.element })
-        let permutationsOfRemaining = permutations(of: remaining)
+runningSum([1,2,3,4]) // [1,3,6,10]
 
-        for perm in permutationsOfRemaining {
-            perms.append([array[i]] + perm)
+// https://leetcode.com/problems/richest-customer-wealth/
+func maximumWealth(_ accounts: [[Int]]) -> Int {
+    var ret = 0
+    for i in accounts {
+        var sum = 0
+        for j in i {
+            sum += j
         }
-      }
-
-    return perms
+        ret = max(sum, ret)
+    }
+    return ret
 }
 
-findSubstring("aaa", ["a", "a"])
-//findSubstring("wordgoodgoodgoodbestword", ["word","good","best","good"]) // [8]
-//findSubstring("barfoofoobarthefoobarman", ["bar","foo","the"]) // [6, 9, 12]
+// https://leetcode.com/problems/length-of-last-word/
+func lengthOfLastWord(_ s: String) -> Int {
+    var ret = 0
+    for c in Array(s).reversed() {
+        if c != " " {
+            ret += 1
+        } else if ret != 0 {
+            return ret
+        }
+    }
+    return ret
+}
+
+lengthOfLastWord("   fly me   to   the moon  ") // 4
+
+
+// https://leetcode.com/problems/count-and-say/
+func countAndSay(_ n: Int) -> String {
+    func say(_ s: [Character]) -> String {
+        var ret = ""
+        var count = 1
+        for i in 0..<s.count {
+            if i+1 < s.count && s[i] == s[i+1] {
+                count += 1
+            } else {
+                print(ret, count, s[i])
+                ret += "\(count)\(s[i])"
+                count = 1
+            }
+        }
+        
+        return ret
+    }
+    
+    var ret = "1"
+    for _ in 1..<n {
+        ret = say(Array(ret))
+    }
+    return ret
+}
+
+countAndSay(4) // 1211
+
+// https://leetcode.com/problems/search-insert-position/
+func searchInsert(_ nums: [Int], _ target: Int) -> Int {
+    func binarySearch(_ nums: [Int], _ target: Int) -> [Int] {
+        var l = 0
+        var r = nums.count - 1
+        while l <= r {
+            var m = (l + r) / 2
+            if nums[m] < target {
+                l = m+1
+            } else {
+                r = m-1
+            }
+        }
+        return [l, r]
+    }
+    
+    let ret = binarySearch(nums, target)
+    print(ret)
+    return max(ret.first!, ret.last!)
+}
+
+searchInsert([1,3,5,6], 3) // 2
 
 // https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/
 func strStr(_ haystack: String, _ needle: String) -> Int {
@@ -192,37 +298,6 @@ func climbStairs(_ n: Int) -> Int {
 }
 
 //climbStairs(4) // 5
-
-// https://leetcode.com/problems/longest-consecutive-sequence
-func longestConsecutive(_ nums: [Int]) -> Int {
-    var s = Set(nums)
-    var ret = 0
-    
-    for i in s {
-        if s.contains(i-1) {
-            continue
-        }
-        
-        var c = 1
-        while s.contains(i+c) {
-            c += 1
-        }
-        if c > ret {
-            ret = c
-        }
-    }
-    
-    return ret
-}
-
-//longestConsecutive([100,4,200,1,3,2]) // [1,2,3,4] = 4
-
-// https://leetcode.com/problems/kth-largest-element-in-an-array/
-func findKthLargest(_ nums: [Int], _ k: Int) -> Int {
-    return nums.sorted(by: >)[k-1]
-}
-
-//findKthLargest([3,2,1,5,6,4], 2) // 5
 
 // https://leetcode.com/problems/longest-common-prefix/
 func longestCommonPrefix(_ strs: [String]) -> String {
@@ -330,45 +405,6 @@ func merge(_ nums1: inout [Int], _ m: Int, _ nums2: [Int], _ n: Int) {
     ret.append(contentsOf: nums2.prefix(upTo: n))
     nums1 = ret.sorted()
 }
-
-// https://leetcode.com/problems/3sum
-func threeSum(_ nums: [Int]) -> [[Int]] {
-    let arr = nums.sorted()
-    var ret = [[Int]]()
-    print(arr)
-    for i in 0..<arr.count {
-        var j = i+1
-        var k = arr.count-1
-        
-        while j<k {
-            print(arr[i],arr[j],arr[k])
-            if arr[i] + arr[j] + arr[k] == 0 {
-                ret.append([arr[i], arr[j], arr[k]])
-                j += 1
-                k -= 1
-            } else {
-                // find pair that equal -arr[i]
-                if arr[j] + arr[k] < -arr[i] {
-                    j += 1
-                } else {
-                    k -= 1
-                }
-            }
-        }
-    }
-    
-    return Array(Set(ret))
-}
-
-//threeSum([-1,0,1,2,-1,-4])
-//threeSum([3,0,-2,-1,1,2]) // [[-2,-1,3],[-2,0,2],[-1,0,1]]
-//threeSum([-1,0,1,2,-1,-4]) // [[-1,-1,2],[-1,0,1]]
-//Explanation:
-//nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0.
-//nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0.
-//nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0.
-//The distinct triplets are [-1,0,1] and [-1,-1,2].
-//Notice that the order of the output and the order of the triplets does not matter.
 
 // https://leetcode.com/problems/palindrome-number/
 func isPalindrome(_ x: Int) -> Bool {
