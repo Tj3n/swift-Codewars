@@ -2,6 +2,158 @@
 
 import Foundation
 
+// https://leetcode.com/problems/summary-ranges/
+func summaryRanges(_ nums: [Int]) -> [String] {
+    if nums.count == 0 {
+        return []
+    } else if nums.count == 1 {
+        return ["\(nums.first!)"]
+    }
+    
+    var ret = [[Int]]()
+    ret.append([nums.first!])
+    for i in 1..<nums.count {
+        if nums[i]-1 == nums[i-1] {
+            var arr = ret.popLast()!
+            arr.append(nums[i])
+            ret.append(arr)
+        } else {
+            ret.append([nums[i]])
+        }
+    }
+    return ret.map {
+        if $0.count == 1 {
+            return "\($0.first!)"
+        } else {
+            return "\($0.first!)->\($0.last!)"
+        }
+    }
+}
+
+summaryRanges([0,2,3,4,6,8,9]) // ["0","2->4","6","8->9"]
+
+// https://leetcode.com/problems/contains-duplicate-ii/
+func containsNearbyDuplicate(_ nums: [Int], _ k: Int) -> Bool {
+    var dict = [Int: Int]()
+    
+    for i in nums.indices {
+        if let index = dict[nums[i]], abs(i-index) <= k {
+            return true
+        }
+        
+        dict[nums[i]] = i
+    }
+    
+    return false
+}
+
+containsNearbyDuplicate([1,2,3,1], 3)
+containsNearbyDuplicate([1,0,1,1], 1)
+containsNearbyDuplicate([1,2,3,1,2,3], 2)
+
+// https://leetcode.com/problems/happy-number/
+func isHappy(_ n: Int) -> Bool {
+    var i = n
+    var s = Set<Int>()
+    while i != 1 {
+        i = String(i).reduce(into: 0, { partialResult, c in
+            let d = Int(String(c))!
+            partialResult += d*d
+        })
+        if s.contains(i) {
+             return false
+        }
+        s.insert(i)
+    }
+    return true
+}
+
+isHappy(19)
+isHappy(2)
+isHappy(7)
+
+// https://leetcode.com/problems/word-pattern/
+func wordPattern(_ pattern: String, _ s: String) -> Bool {
+    // Similar to below question
+    let ss = s.components(separatedBy: CharacterSet.whitespaces)
+    let pp = Array(pattern)
+    guard ss.count == pp.count else { return false }
+    var dict = [Character: String]()
+    
+    for i in 0..<pattern.count {
+        if let cs = dict[pp[i]] {
+            if cs != ss[i] {
+                return false
+            }
+        } else if dict.values.contains(ss[i]) {
+            return false
+        } else {
+            dict[pp[i]] = ss[i]
+        }
+    }
+    
+    return true
+}
+
+//wordPattern("abba", "dog cat cat dog")
+wordPattern("aaa", "aa aa aa aa") // false
+
+// https://leetcode.com/problems/isomorphic-strings/
+func isIsomorphic(_ s: String, _ t: String) -> Bool {
+    
+    // Use single dict & values.contains
+    // O(n^2) but faster than O(n)...
+    var dict = [Character: Character]()
+    for i in s.indices {
+        if let cs = dict[s[i]] {
+            if cs != t[i] {
+                return false
+            }
+        } else if dict.values.contains(t[i]) {
+            return false
+        } else {
+            dict[s[i]] = t[i]
+        }
+    }
+    
+    return true
+    
+    // Use set and zip
+//    let ss = Set(s)
+//    let tt = Set(t)
+//    let st = Set(zip(s, t).map({ String($0.0)+String($0.1) }))
+//    if ss.count == tt.count && ss.count == st.underestimatedCount && tt.count == st.underestimatedCount {
+//        return true
+//    }
+//    
+//    return false
+    
+    // Use double mapping dict
+//    var to = [Character: Character]()
+//    var from = [Character: Character]()
+//    let ss = Array(s)
+//    let tt = Array(t)
+//    for i in 0..<ss.count {
+//        if let ct = to[tt[i]], ct != ss[i] {
+//            return false
+//        } else {
+//            to[tt[i]] = ss[i]
+//        }
+//        
+//        if let cs = from[ss[i]], cs != tt[i] {
+//            return false
+//        } else {
+//            from[ss[i]] = tt[i]
+//        }
+//    }
+//    
+//    return true
+}
+
+isIsomorphic("paper", "title") // true
+isIsomorphic("badc", "baba") // false
+isIsomorphic("baba", "badc") // false
+
 // https://leetcode.com/problems/is-subsequence/
 func isSubsequence(_ s: String, _ t: String) -> Bool {
     let ss = Array(s)

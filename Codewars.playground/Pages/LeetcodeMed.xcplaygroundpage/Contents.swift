@@ -1,6 +1,159 @@
  
 import Foundation
 
+// https://leetcode.com/problems/group-anagrams/
+func groupAnagrams(_ strs: [String]) -> [[String]] {
+    
+    // 1 liner
+    return Array(strs.reduce(into: [String: [String]]()) { partialResult, s in
+        let ss = String(s.sorted())
+        partialResult[ss] = (partialResult[ss] ?? []) + [s]
+    }.values)
+    
+    // use sorted string to compare for anagrams
+//    var ret = [String: [String]]()
+//    
+//    for s in strs {
+//        let ss = String(s.sorted())
+//        ret[ss] = (ret[ss] ?? []) + [s]
+//    }
+//    return Array(ret.values)
+}
+
+groupAnagrams(["eat","tea","tan","ate","nat","bat"]) //[["bat"],["nat","tan"],["ate","eat","tea"]]
+
+// https://leetcode.com/problems/set-matrix-zeroes/
+func setZeroes(_ matrix: inout [[Int]]) {
+    // o(m+n)? : save the row/col of every cell needs to change by go it's whole row/col then replace them with 0
+    let rows = matrix.count
+    let cols = matrix.first!.count
+    var toUpdates = [(Int, Int)]()
+    
+    for i in 0..<rows {
+        for j in 0..<cols {
+            if matrix[i][j] == 0 {
+                for m in 0..<rows where m != i {
+                    if matrix[m][j] != 0 {
+                        toUpdates.append((m, j))
+                    }
+                }
+                for n in 0..<cols where n != j {
+                    if matrix[i][n] != 0 {
+                        toUpdates.append((i, n))
+                    }
+                }
+            }
+        }
+    }
+    
+    toUpdates.forEach({
+        matrix[$0.0][$0.1] = 0
+    })
+}
+
+// [[0,0,0,0],[0,4,5,0],[0,3,1,0]]
+var matrix = [[0,1,2,0],[3,4,5,2],[1,3,1,5]]
+setZeroes(&matrix)
+print(matrix)
+
+// https://leetcode.com/problems/rotate-image/
+func rotate(_ matrix: inout [[Int]]) {
+    let n = matrix.count
+    
+    // https://assets.leetcode.com/users/images/9f7d86fb-cde6-4760-8088-b683bb52160f_1597580296.4229963.png
+    
+    // Transpose: flip x & y axis
+    for i in 0..<n {
+        for j in i..<n {
+            let prev = matrix[i][j]
+            let next = matrix[j][i]
+            matrix[i][j] = next
+            matrix[j][i] = prev
+            print(i, j, "=", j, i, "=", prev, next)
+        }
+    }
+    print("==" , matrix)
+    
+    // Reverse the col
+    for i in 0..<n {
+        matrix[i] = matrix[i].reversed()
+    }
+}
+
+//var matrix = [[1,2,3],[4,5,6],[7,8,9]] // [[7,4,1],[8,5,2],[9,6,3]]
+//var matrix = [[5,1,9,11],[2,4,8,10],[13,3,6,7],[15,14,12,16]] // [[15,13,2,5],[14,3,4,1],[12,6,8,9],[16,7,10,11]]
+//rotate(&matrix)
+//print(matrix)
+
+// https://leetcode.com/problems/spiral-matrix/
+func spiralOrder(_ matrix: [[Int]]) -> [Int] {
+    // O(n)
+    let col = matrix.first!.count
+    let row = matrix.count
+    let total = row*col
+    
+    var count = 0
+    
+    var startRow = 0
+    var startCol = 0
+    
+    var endRow = row-1
+    var endCol = col-1
+    
+    var ret = [Int]()
+
+    // goes right down left up, update start/end after each loop
+    while count < total {
+        print(startRow, startCol, endRow, endCol)
+        print("===")
+        for i in startCol...endCol {
+            print(startRow, i)
+            ret.append(matrix[startRow][i])
+            count += 1
+            if count == total {
+                return ret
+            }
+        }
+        startRow += 1
+        print("==", count, startRow, endRow)
+        
+        for i in startRow...endRow {
+            print(i, endCol)
+            ret.append(matrix[i][endCol])
+            count += 1
+            if count == total {
+                return ret
+            }
+        }
+        endCol -= 1
+        print("==")
+        for i in (startCol...endCol).reversed() {
+            print(endRow, i)
+            ret.append(matrix[endRow][i])
+            count += 1
+            if count == total {
+                return ret
+            }
+        }
+        endRow -= 1
+        print("==")
+        for i in (startRow...endRow).reversed() {
+            print(i, startCol)
+            ret.append(matrix[i][startCol])
+            count += 1
+            if count == total {
+                return ret
+            }
+        }
+        
+        startCol += 1
+    }
+    print(ret)
+    return ret
+}
+
+spiralOrder([[1,2,3,4],[5,6,7,8],[9,10,11,12]]) //[1,2,3,4,8,12,11,10,9,5,6,7])
+
 // https://leetcode.com/problems/longest-substring-without-repeating-characters/
 func lengthOfLongestSubstring(_ s: String) -> Int {
     // o(n): memorize the current length, if reached index i with matched saved index in dict, then compare for getting max length with current length, and if the current length's lower bound is larger than index then just ignore it, else current length is equal i - index
