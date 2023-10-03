@@ -2,6 +2,214 @@
 
 import Foundation
 
+// https://leetcode.com/problems/lru-cache
+class LRUCache {
+    // Use linked list as the data structure
+    // Use dictionary to store the key for fast value fetching
+    // Track head, tail, node next, prev to quickly move the node to front
+    
+    class Node {
+        var key: Int
+        var data: Int
+        var next: Node?
+        var prev: Node?
+        init(key: Int, data: Int) {
+            self.data = data
+            self.key = key
+        }
+    }
+    
+    var head: Node?
+    var tail: Node?
+    var count: Int = 0
+    let capacity: Int
+    var cache = [Int: Node]()
+
+    init(_ capacity: Int) {
+        self.capacity = capacity
+    }
+    
+    func get(_ key: Int) -> Int {
+        if let node = cache[key] {
+            // move this node to head as it recently used
+            moveToHead(node)
+            return node.data
+        }
+        return -1
+    }
+    
+    func put(_ key: Int, _ value: Int) {
+        if let node = cache[key] {
+            // move this node to head as it recently used
+            node.data = value
+            moveToHead(node)
+        } else {
+            let node = Node(key: key, data: value)
+            // make this the head node
+            node.next = head
+            head?.prev = node
+            head = node
+            count += 1
+            cache[key] = node
+            if tail == nil {
+                tail = head
+            }
+        }
+        
+        if count > capacity {
+            // remove tail node
+            if let key = tail?.key {
+                cache.removeValue(forKey: key)
+            }
+            tail = tail?.prev
+            tail?.next = nil
+            count -= 1
+        }
+
+    }
+    
+    func moveToHead(_ node: Node) {
+        if head === node {
+            return
+        } else {
+            // Replace prev node next value = current node next value before removing it from list
+            node.prev?.next = node.next
+            node.next?.prev = node.prev
+            node.next = head
+            head?.prev = node
+            head = node
+        }
+        
+        if node === tail {
+            tail = tail?.prev
+            tail?.next = nil
+        }
+    }
+}
+
+let obj = LRUCache(2)
+obj.put(1, 1)
+obj.put(1, 1)
+obj.put(2, 2)
+obj.get(1) // 1
+obj.put(3, 3) // {1=1, 3=3}
+obj.get(2) // -1
+obj.put(4, 4) // {4=4, 3=3}
+obj.get(1) // -1
+obj.get(3)
+obj.get(4)
+
+// https://leetcode.com/problems/basic-calculator/
+func calculate(_ s: String) -> Int {
+    /* Real solution: convert the sign into 1 or -1 then keep adding to result
+    var result = 0
+    var num = 0
+    var sign = 1
+    var stack = [sign]
+    
+    for char in s {
+        switch char {
+        case "+", "-":
+            result += num * sign
+            sign = stack.last! * (char == "+" ? 1 : -1)
+            num = 0
+        case "(":
+            stack.append(sign)
+        case ")":
+            stack.removeLast()
+        case " ":
+            break
+        default:
+            num = num * 10 + char.wholeNumberValue!
+        }
+        print(char, stack, num, sign, result)
+    }
+    
+    return result + num * sign
+    */
+    
+    // Turn the string into a rpn notations array, then calculate that
+    let ops = Set(["-", "+"])
+    var stack = [String]()
+    var postfix = [String]()
+    var temp = ""
+    let ss = s.map({ String($0) }).filter({ $0 != " " })
+    
+    for (i, c) in ss.enumerated() {
+        if c == "(" {
+            if temp.count > 0 {
+                postfix.append(temp)
+                temp = ""
+            }
+            if ss[i+1] == "-" {
+                postfix.append("0")
+            }
+            stack.append(c)
+        } else if c == ")" {
+            if temp.count > 0 {
+                postfix.append(temp)
+                temp = ""
+            }
+            while let top = stack.last, top != "(" {
+                postfix.append(stack.removeLast())
+            }
+            stack.removeLast()
+        } else if c == "-" || c == "+" {
+            if temp.count > 0 {
+                postfix.append(temp)
+                temp = ""
+            }
+            while let op = stack.last, ops.contains(op) {
+                postfix.append(stack.removeLast())
+            }
+            stack.append(c)
+        } else {
+            temp += c
+        }
+        print(postfix, stack)
+    }
+    
+    if temp.count > 0 {
+        postfix.append(temp)
+        temp = ""
+    }
+    
+    while !stack.isEmpty {
+        postfix.append(stack.removeLast())
+    }
+    print(postfix)
+    
+    var rpnStack = [Int]()
+    for c in postfix {
+        if c == "-" || c == "+" {
+            print(rpnStack, c)
+            let j = rpnStack.popLast() ?? 0
+            let k = rpnStack.popLast() ?? 0
+            switch c {
+            case "+":
+                rpnStack.append(k+j)
+                break
+            case "-":
+                rpnStack.append(k-j)
+                break
+            default:
+                break
+            }
+        } else {
+            rpnStack.append(Int(c)!)
+        }
+    }
+    return rpnStack[0]
+}
+
+//calculate("1-( -2)") // 3
+//calculate("1 + 1")
+//calculate("1234")
+//calculate(" 2-1 + 2 ") // 3
+calculate("(1+(4+5-2)-3)+(6+8)") // 23
+calculate("-(1+(4+5+2)-3)+(6+8)") // 23
+calculate("- (3 - (- (4 + 5) ) +2 )") // 3,4,5,+,-,-,-,2,+
+
 // https://leetcode.com/problems/minimum-window-substring/
 func minWindow(_ s: String, _ t: String) -> String {
     // o(n): m+n = t.length + s.length, use sliding window

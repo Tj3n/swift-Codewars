@@ -632,67 +632,6 @@ func isValid(_ s: String) -> Bool {
 //isValid("([)]") // false
 //isValid("([]{})") // true
 
-class MinStack {
-
-    var arr = [Int]()
-    var min = Int(Int32.min)
-
-    init() {
-        
-    }
-    
-    // Associate each new val with different min value
-    func push(_ val: Int) {
-        if !arr.isEmpty {
-            if val > min {
-                arr.append(val)
-            } else {
-                arr.append(val*2-min)
-                min = val
-            }
-        } else {
-            arr.append(val)
-            min = val
-        }
-    }
-    
-    func pop() {
-        if let last = arr.popLast() {
-            if last < min {
-                min = 2*min - last
-            }
-        }
-    }
-    
-    func top() -> Int {
-        if let last = arr.last {
-            if last < min {
-                return min
-            }
-            return last
-        }
-        return 0
-    }
-    
-    func getMin() -> Int {
-        return min
-    }
-}
-
-//var minStack = MinStack();
-//minStack.push(2);
-//minStack.push(0);
-//minStack.push(3);
-//minStack.push(0);
-//minStack.getMin(); // return 0
-//minStack.pop();
-//minStack.getMin(); // return 0
-//minStack.pop();
-//minStack.getMin(); // return 0
-//minStack.pop();
-//minStack.top();    // return 2
-//minStack.getMin(); // return 2
-
 func wordBreak(_ s: String, _ wordDict: [String]) -> Bool {
     var dp = Array(repeating: false, count: s.count + 1)
     dp[0] = true

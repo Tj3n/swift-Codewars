@@ -1,6 +1,218 @@
  
 import Foundation
 
+// https://leetcode.com/problems/evaluate-reverse-polish-notation/
+func evalRPN(_ tokens: [String]) -> Int {
+    // O(N): use stack to push all number in, then when reached a notation, pop last 2 number, calculate, and append that value in the stack
+    let validNotations = Set(["+", "*", "/", "-"])
+    var stack = [Int]()
+    
+    for i in tokens {
+        if validNotations.contains(i) {
+            print(stack, i)
+            let j = stack.popLast()!
+            let k = stack.popLast()!
+            
+            switch i {
+            case "+":
+                stack.append(k+j)
+                break
+            case "-":
+                stack.append(k-j)
+                break
+            case "/":
+                stack.append(k/j)
+                break
+            case "*":
+                stack.append(k*j)
+                break
+            default:
+                break
+            }
+        } else {
+            stack.append(Int(i)!)
+        }
+    }
+    print(stack)
+    return stack[0]
+    
+    // Same as above but replace the array in-place, so is quite slower
+//    var ret = tokens
+//    var i = 2
+//    
+//    while ret.count > 1 {
+//        if i >= ret.count {
+//            break
+//        } else if validNotations.contains(ret[i]) {
+//            var val = ""
+//            switch ret[i] {
+//            case "+":
+//                val = String(Int(ret[i-2])!+Int(ret[i-1])!)
+//                break
+//            case "-":
+//                val = String(Int(ret[i-2])!-Int(ret[i-1])!)
+//                break
+//            case "/":
+//                val = String(Int(ret[i-2])!/Int(ret[i-1])!)
+//                break
+//            case "*":
+//                val = String(Int(ret[i-2])!*Int(ret[i-1])!)
+//                break
+//            default:
+//                break
+//            }
+//            ret.replaceSubrange(i-2...i, with: [val])
+//            i = max(i-2, 0)
+//        } else {
+//            i += 1
+//        }
+//    }
+//    
+//    return Int(ret[0])!
+}
+
+evalRPN(["2","1","+","3","*"]) // ((2 + 1) * 3) = 9
+evalRPN(["4","13","5","/","+"]) // (4 + (13 / 5)) = 6
+evalRPN(["10","6","9","3","+","-11","*","/","*","17","+","5","+"]) // ((10 * (6 / ((9 + 3) * -11))) + 17) + 5 = 22
+
+// https://leetcode.com/problems/simplify-path/
+func simplifyPath(_ path: String) -> String {
+    // o(3n = n), split and check+remove each words, can be faster if use stack of words and pop if meet ".."
+    var comps = path.components(separatedBy: "/")
+    var i = 0
+    print(comps)
+    while i < comps.count {
+        if comps[i].isEmpty || comps[i] == "." {
+            comps.remove(at: i)
+        } else if comps[i] == ".." {
+            comps.remove(at: i)
+            if i > 0 {
+                comps.remove(at: i-1)
+            }
+            i = max(i-1, 0)
+        } else {
+            i+=1
+        }
+    }
+    print(comps)
+    return "/"+comps.joined(separator: "/")
+}
+
+simplifyPath("/a/../../b/../c//.//") // /c
+simplifyPath("/home/user/Documents/../../../usr/local/bin") // "/usr/local/bin"
+simplifyPath("/../home/user//Documents/") // "/home/user/Documents"
+simplifyPath("/home/user/Documents/../Pictures")// "/home/user/Pictures"
+simplifyPath("/../home/user/Documents") // "/home/user/Documents"
+simplifyPath("/home/user/./Downloads/../Pictures/././") // "/home/user/Pictures"
+
+// https://leetcode.com/problems/minimum-number-of-arrows-to-burst-balloons/
+func findMinArrowShots(_ points: [[Int]]) -> Int {
+    // O(n): sort first, then check for overlap range, make the prev range the combined of prev and next range eg.[1,6], [2,8] become [2, 6], if the next range not falls into this then must need extra arrow
+    if points.count <= 1 { return points.count }
+    let arr = points.sorted(by: { $0[0] < $1[0] })
+    var ret = 1
+    var prev = arr.first!
+    
+    for i in 1..<arr.count {
+        if arr[i][0] <= prev[1] {
+            prev = [max(prev[0], arr[i][0]), min(prev[1], arr[i][1])]
+        } else {
+            ret += 1
+            prev = arr[i]
+        }
+    }
+    
+    return ret
+}
+
+findMinArrowShots([[10,16],[2,8],[1,6],[7,12]])
+findMinArrowShots([[1,2],[3,4],[5,6],[7,8]])
+findMinArrowShots([[1,2],[2,3],[3,4],[4,5]])
+
+// https://leetcode.com/problems/insert-interval/
+func insert(_ intervals: [[Int]], _ newInterval: [Int]) -> [[Int]] {
+    // Shorter way, o(n): save dependent l and r, while merging only around the new interval
+    var arr = intervals
+    var l = [[Int]]()
+    var r = [[Int]]()
+    var new = newInterval
+    for interval in arr {
+        if interval[1] < newInterval[0] {
+            l.append(interval)
+        } else if interval[0] > newInterval[1] {
+            r.append(interval)
+        } else {
+            new = [min(interval[0], new[0]), max(interval[1], new[1])]
+        }
+    }
+    print(new, l + [new] + r)
+    return l + [new] + r
+    
+    // o(n): find a place to insert the new interval in, then use the same code as below to sort
+//    if intervals.count < 1 { return [newInterval] }
+//    var arr = intervals
+//    
+//    var i = 0
+//    while i < arr.count {
+//        print(i, arr[i][1], newInterval[0])
+//        if arr[i][0] >= newInterval[0] {
+//            arr.insert(newInterval, at: i)
+//            break;
+//        } else if arr[i][1] >= newInterval[0] {
+//            arr.insert(newInterval, at: i+1)
+//            break;
+//        } else if i+1 == arr.count {
+//            arr.insert(newInterval, at: i+1)
+//            return arr;
+//        }
+//        i += 1
+//    }
+//    while i < arr.count-1 {
+//        let prev = arr[i]
+//        let next = arr[i+1]
+//        if prev[1] >= next[0] {
+//            arr[i+1] = [min(prev[0], next[0]),
+//                        max(next[1], prev[1])]
+//            arr.remove(at: i)
+//        } else {
+//            i+=1
+//        }
+//    }
+//    return arr
+}
+
+insert([[1,3],[6,9]], [2,5])
+insert([[1,5]], [0,0]) // [[0,0],[1,5]]
+insert([[1,3]], [4,5]) // [[1,3], [4,5]]
+insert([[1,2],[3,5],[6,7],[8,10],[12,16]], [4,8]) // [[1,2],[3,10],[12,16]]
+
+// https://leetcode.com/problems/merge-intervals/
+func merge(_ intervals: [[Int]]) -> [[Int]] {
+    // o(n): iterate 1 time to sort and 1 time to merge
+    if intervals.count <= 1 { return intervals }
+    var arr = intervals.sorted(by: { $0[0] < $1[0] })
+    var i = 0
+    while i < arr.count-1 {
+        let prev = arr[i]
+        let next = arr[i+1]
+        print(arr, prev, next)
+        if prev[1] >= next[0] {
+            arr[i+1] = [min(prev[0], next[0]),
+                        max(next[1], prev[1])]
+            arr.remove(at: i)
+        } else {
+            i+=1
+        }
+    }
+    print(arr)
+    return arr
+}
+
+merge([[2,6],[8,10],[15,18],[1,3]]) // [[1,6],[8,10],[15,18]]
+merge([[1,4],[2,3]]) // [1,4]
+merge([[1,4],[0,2],[3,5]]) // [[0,5]]
+merge([[2,3],[2,2],[3,3],[1,3],[5,7],[2,2],[4,6]]) // [[1,3],[4,7]]
+
 // https://leetcode.com/problems/group-anagrams/
 func groupAnagrams(_ strs: [String]) -> [[String]] {
     
@@ -21,6 +233,67 @@ func groupAnagrams(_ strs: [String]) -> [[String]] {
 }
 
 groupAnagrams(["eat","tea","tan","ate","nat","bat"]) //[["bat"],["nat","tan"],["ate","eat","tea"]]
+
+class MinStack {
+
+    var arr = [Int]()
+    var min = Int(Int32.min)
+
+    init() {
+        
+    }
+    
+    // Associate each new val with different min value
+    func push(_ val: Int) {
+        if !arr.isEmpty {
+            if val > min {
+                arr.append(val)
+            } else {
+                arr.append(val*2-min)
+                min = val
+            }
+        } else {
+            arr.append(val)
+            min = val
+        }
+    }
+    
+    func pop() {
+        if let last = arr.popLast() {
+            if last < min {
+                min = 2*min - last
+            }
+        }
+    }
+    
+    func top() -> Int {
+        if let last = arr.last {
+            if last < min {
+                return min
+            }
+            return last
+        }
+        return 0
+    }
+    
+    func getMin() -> Int {
+        return min
+    }
+}
+
+//var minStack = MinStack();
+//minStack.push(2);
+//minStack.push(0);
+//minStack.push(3);
+//minStack.push(0);
+//minStack.getMin(); // return 0
+//minStack.pop();
+//minStack.getMin(); // return 0
+//minStack.pop();
+//minStack.getMin(); // return 0
+//minStack.pop();
+//minStack.top();    // return 2
+//minStack.getMin(); // return 2
 
 // https://leetcode.com/problems/set-matrix-zeroes/
 func setZeroes(_ matrix: inout [[Int]]) {
