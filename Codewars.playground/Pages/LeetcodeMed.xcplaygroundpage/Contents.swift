@@ -1,6 +1,40 @@
  
 import Foundation
 
+// https://leetcode.com/problems/letter-combinations-of-a-phone-number
+func letterCombinations(_ digits: String) -> [String] {
+    let map: [Character: [String]] = ["2": ["a","b","c"],
+                                      "3": ["d","e","f"],
+                                      "4": ["g","h","i"],
+                                      "5": ["j","k","l"],
+                                      "6": ["m","n","o"],
+                                      "7": ["p","q","r","s"],
+                                      "8": ["t","u","v"],
+                                      "9": ["w","x","y","z"]]
+    let arr = digits.map({ map[$0]! })
+    var ret = [String]()
+    generateCombinations(arr, "", 0, &ret)
+    print(ret)
+    return ret
+}
+
+func generateCombinations(_ input: [[String]], _ current: String, _ index: Int, _ result: inout [String]) {
+    if index == input.count {
+        result.append(current)
+        return
+    }
+    
+    let str = input[index]
+    
+    for i in 0..<str.count {
+        let char = str[i]
+        print(index, str, current, char, i)
+        generateCombinations(input, current + char, index + 1, &result)
+    }
+}
+
+letterCombinations("23") // ["ad","ae","af","bd","be","bf","cd","ce","cf"]
+
 // https://leetcode.com/problems/evaluate-reverse-polish-notation/
 func evalRPN(_ tokens: [String]) -> Int {
     // O(N): use stack to push all number in, then when reached a notation, pop last 2 number, calculate, and append that value in the stack

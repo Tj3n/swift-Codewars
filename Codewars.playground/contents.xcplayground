@@ -9,5 +9,6 @@
         <page name='Leetcode'/>
         <page name='LeetcodeMed'/>
         <page name='LeetcodeHard'/>
+        <page name='Hackerrank'/>
     </pages>
 </playground>
