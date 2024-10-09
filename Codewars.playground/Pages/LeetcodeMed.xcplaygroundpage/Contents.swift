@@ -1,6 +1,49 @@
  
 import Foundation
 
+// https://leetcode.com/problems/game-of-life
+func gameOfLife(_ board: inout [[Int]]) {
+    func getNeighborCount(_ i: Int, _ j: Int, _ board: [[Int]]) -> Int {
+        var count = 0
+        let rowRange = i-1...i+1
+        let colRange = j-1...j+1
+        for row in rowRange {
+            for col in colRange {
+                if row == i && col == j {
+                    continue
+                }
+                if row >= 0 && row < board.count && col >= 0 && col < board[row].count {
+                    if board[row][col] == 1 {
+                        count += 1
+                    }
+                }
+            }
+        }
+        
+        return count
+    }
+    
+    var res = board
+    for i in 0..<board.count {
+        for j in 0..<board[i].count {
+            let count = getNeighborCount(i, j, board)
+            if board[i][j] == 1 {
+                if count < 2 || count > 3 {
+                    res[i][j] = 0
+                }
+            } else if count == 3 {
+                res[i][j] = 1
+            }
+        }
+    }
+    
+    board = res
+}
+
+//var aa = [[0,1,0],[0,0,1],[1,1,1],[0,0,0]]
+//gameOfLife(&aa)
+//aa //[[0,0,0],[1,0,1],[0,1,1],[0,1,0]]
+
 // https://leetcode.com/problems/letter-combinations-of-a-phone-number
 func letterCombinations(_ digits: String) -> [String] {
     let map: [Character: [String]] = ["2": ["a","b","c"],
